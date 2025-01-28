@@ -8,11 +8,11 @@
 #include <stdio.h>
 #include <unistd.h>
 
-static const move_t * path;
+static const step_t * path;
 static int size;
 static int step_counter = 0;
 
-void copilot_init(const move_t * path_ptr, const int path_size)
+void copilot_init(const step_t * path_ptr, const int path_size)
 {
     step_counter = 0;
     size = path_size;
@@ -22,7 +22,7 @@ void copilot_init(const move_t * path_ptr, const int path_size)
 void copilot_move(void)
 {
     robot_status_t my_status = robot_get_status();
-    pilot_start_move(&path[step_counter % size]);
+    pilot_start_move(&path[step_counter % size].move);
     fprintf(stdout, "codeurs: g = %d, d = %d\n", my_status.left_encoder,
             my_status.right_encoder);
     fprintf(stdout, "proxy: g = %d, c = %d, d = %d\n", my_status.left_sensor,

@@ -1,8 +1,8 @@
 // UI.c
 
 #include "ui.h"
-#include "copilot.h"
-#include "pilot.h"
+#include "../robot_app/copilot.h"
+#include "../robot_app/pilot.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -104,11 +104,27 @@ static void handle_create_path() {
   /*TODO: prompt for the number of steps and create an empty path, print success
    * or failure messages accordingly */
   /*HINT: update steps_number on success or set to 0 on failure */
+
+  steps_number = handle_user_prompt_int(UI_ASK_SIZE_PATH, 1, 100);
+  step_t *path = calloc(steps_number, sizeof(step_t));
+  if (steps_number > 0) {
+    copilot_init(path, steps_number);
+    print_success_message(CMD_CREATE_PATH);
+  } else {
+    print_failure_message(CMD_CREATE_PATH);
+  }
 }
 
 static void handle_add_step() {
   /*TODO: prompt for adequate data to call copilot_add_step(index,step); */
   /*HINT: adding step fails if steps_number == 0 */
+
+  if (steps_number == 0) {
+    print_failure_message(CMD_ADD_STEP);
+    return;
+  }
+
+  // TODO
 }
 
 static void handle_destroy_path() {
@@ -125,18 +141,18 @@ static int handle_start_path() {
 
 static void handle_show_path() {
   int i = 0;
-  move step;
+  step_t step;
   if (steps_number > 0) {
     print_success_message(CMD_SHOW_PATH);
     for (i = 0; i < steps_number; i++) {
       step = copilot_get_step(i);
       if (step.speed != 0) {
-        if (step.type == FORWARD)
+        if (step.move.action == FORWARD)
           printf("%d : FORWARD speed:%d distance:%d \n", i, step.speed,
-                 step.range.distance);
+                 step.move.distance);
         else
           printf("%d : ROTATION speed : %d turn: %d \n", i, step.speed,
-                 step.range.angle);
+                 step.move.angle);
       } else {
         printf("%d : No MOVE\n", i);
       }
