@@ -46,3 +46,8 @@ int copilot_is_path_complete(void)
 {
     return step_counter == size;
 }
+
+step_t copilot_get_step(int i)
+{
+    
+}

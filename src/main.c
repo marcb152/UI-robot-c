@@ -69,14 +69,14 @@ int main(void)
 static void app_loop()
 {
   int size = 6;
-  move_t * path_ptr = calloc(size, sizeof(move_t));
-  path_ptr[0] = (move_t){FORWARD, {5}, 30};
-  path_ptr[1] = (move_t){ROTATION, {RIGHT}, 20};
-  path_ptr[2] = (move_t){FORWARD, {5}, 30};
-  path_ptr[3] = (move_t){ROTATION, {LEFT}, 20};
-  path_ptr[4] = (move_t){FORWARD, {5}, 30};
-  path_ptr[5] = (move_t){ROTATION, {U_TURN}, 20};
-  copilot_init(path_ptr, size);
+  // move_t * path_ptr = calloc(size, sizeof(move_t));
+  // path_ptr[0] = (move_t){FORWARD, {5}, 30};
+  // path_ptr[1] = (move_t){ROTATION, {RIGHT}, 20};
+  // path_ptr[2] = (move_t){FORWARD, {5}, 30};
+  // path_ptr[3] = (move_t){ROTATION, {LEFT}, 20};
+  // path_ptr[4] = (move_t){FORWARD, {5}, 30};
+  // path_ptr[5] = (move_t){ROTATION, {U_TURN}, 20};
+  // copilot_init(path_ptr, size);
 
   while (running)
   {
@@ -84,16 +84,16 @@ static void app_loop()
     if (copilot_is_path_complete())
     {
       size = 8;
-      reallocarray(path_ptr, size, sizeof(move_t));
-      path_ptr[0] = (move_t){FORWARD, {5}, 30};
-      path_ptr[1] = (move_t){ROTATION, {RIGHT}, 20};
-      path_ptr[2] = (move_t){FORWARD, {5}, 30};
-      path_ptr[3] = (move_t){ROTATION, {LEFT}, 20};
-      path_ptr[4] = (move_t){FORWARD, {5}, 30};
-      path_ptr[5] = (move_t){ROTATION, {U_TURN}, 20};
-      path_ptr[6] = (move_t){FORWARD, {5}, 30};
-      path_ptr[7] = (move_t){ROTATION, {LEFT}, 20};
-      copilot_init(path_ptr, size);
+      // reallocarray(path_ptr, size, sizeof(move_t));
+      // path_ptr[0] = (move_t){FORWARD, {5}, 30};
+      // path_ptr[1] = (move_t){ROTATION, {RIGHT}, 20};
+      // path_ptr[2] = (move_t){FORWARD, {5}, 30};
+      // path_ptr[3] = (move_t){ROTATION, {LEFT}, 20};
+      // path_ptr[4] = (move_t){FORWARD, {5}, 30};
+      // path_ptr[5] = (move_t){ROTATION, {U_TURN}, 20};
+      // path_ptr[6] = (move_t){FORWARD, {5}, 30};
+      // path_ptr[7] = (move_t){ROTATION, {LEFT}, 20};
+      // copilot_init(path_ptr, size);
     }
   }
 }

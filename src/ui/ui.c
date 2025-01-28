@@ -17,6 +17,8 @@ typedef enum {
   CMD_DESTROY_PATH,
   CMD_SHOW_PATH,
   CMD_START_PATH,
+  CMD_SAVE_PATH,
+  CMD_LOAD_PATH,
   CMD_QUIT,
   NB_COMMAND
 } menu_command;
@@ -160,6 +162,16 @@ static void handle_show_path() {
   } else {
     print_failure_message(CMD_SHOW_PATH);
   }
+}
+
+static void handle_save_path()
+{
+
+}
+
+static void handle_load_path()
+{
+
 }
 
 extern int ui_start() {
