@@ -10,6 +10,8 @@
 #include "robot_app/pilot.h"
 #include "robot_app/robot.h"
 #include "robot_app/copilot.h"
+#include "ui/ihm.h"
+#include "ui/ui.h"
 
 /**
  * @mainpage Robot application mission 2.
@@ -40,6 +42,9 @@ static void sigint_handler(int dummy) { running = STOPPED; }
 
 int main(void)
 {
+ 
+  ihm_init();
+
   /* start the robot simulator and check its good starting */
   if (robot_start())
   {
