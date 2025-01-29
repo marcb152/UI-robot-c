@@ -5,6 +5,6 @@
 #ifndef IHM_H
 #define IHM_H
 
-void ihm_init();
+int gtk_draw(int argc, char** argv);
 
 #endif //IHM_H

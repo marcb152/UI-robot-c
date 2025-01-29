@@ -41,6 +41,9 @@ CC = gcc
 CCFLAGS  = -DINTOX -DINTOX_ADDRESS=127.0.0.1 -DINTOX_PORT=12341
 CCFLAGS += -I"$(LIB_MRPIZ)/include/mrpiz/"
 
+#GTK 3
+CCFLAGS += -I/usr/include/gtk-3.0 -I/usr/include/pango-1.0 -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include -I/usr/include/harfbuzz -I/usr/include/freetype2 -I/usr/include/libpng16 -I/usr/include/libmount -I/usr/include/blkid -I/usr/include/fribidi -I/usr/include/cairo -I/usr/include/pixman-1 -I/usr/include/gdk-pixbuf-2.0 -I/usr/include/x86_64-linux-gnu -I/usr/include/webp -I/usr/include/gio-unix-2.0 -I/usr/include/atk-1.0 -I/usr/include/at-spi2-atk/2.0 -I/usr/include/at-spi-2.0 -I/usr/include/dbus-1.0 -I/usr/lib/x86_64-linux-gnu/dbus-1.0/include -pthread
+
 # pour genérer les dépendances (fichiers .h inclus dans les .c)
 CCFLAGS += -MMD -MP
 
@@ -50,6 +53,14 @@ CCFLAGS += -D_BSD_SOURCE -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE -D_DEFAULT_SOU
 # Pour le linker
 LDFLAGS  = -L"$(LIB_MRPIZ)/lib/" -lintoxmrpiz -lintox
 LDFLAGS += -lm
+
+# Lien avec GTK3
+LDFLAGS += -lgtk-3 -lgdk-3 -lpango-1.0 -lglib-2.0 -lcairo -lglib-2.0 -lgdk_pixbuf-2.0 -latk-1.0 -latk-bridge-2.0 -lgio-2.0 -lharfbuzz -lfreetype -lpng16
+LDFLAGS += -L/usr/lib/x86_64-linux-gnu -lgio-2.0
+LDFLAGS += -L"/home/tomc/Documents/Mise_a_niveau_C/Robot/lib_mrpiz/lib/" -lintoxmrpiz -lintox -lm -lgtk-3 -lgdk-3 -lpango-1.0 -lglib-2.0 -lcairo -lglib-2.0 -lgdk_pixbuf-2.0 -latk-1.0 -latk-bridge-2.0 -lgio-2.0 -lharfbuzz -lfreetype -lpng16 -L/usr/lib/x86_64-linux-gnu -lgio-2.0 -lgobject-2.0
+
+
+
 # si besoin de multitache
 # LDFLAGS += -lrt -lpthread
 

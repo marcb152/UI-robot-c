@@ -40,10 +40,10 @@ static process_state_t running = ALIVE;
  */
 static void sigint_handler(int dummy) { running = STOPPED; }
 
-int main(void)
+int main(int argc, char *argv[])
 {
  
-  ihm_init();
+  gtk_draw(argc, argv);
 
   /* start the robot simulator and check its good starting */
   if (robot_start())
