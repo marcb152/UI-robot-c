@@ -56,9 +56,14 @@ LDFLAGS += -lm
 # Niveau de vérification
 CCFLAGS += -std=gnu11 -Wall -pedantic
 
+GTK_CFLAGS = $$(pkg-config --cflags gtk+-3.0)
+GTK_LDFLAGS = $$(pkg-config --libs gtk+-3.0)
+
 #Flags suplémentaires demandés par l'agence française ANSI (Cybersecurité) pour linux avec gcc
 CCFLAGS += -fanalyzer -Wformat=2 -Wformat-overflow=2 -Wformat-truncation=2 -Winit-self -Wstringop-overflow=4 -ftrapv -fstack-protector-strong -mstack-protector-guard=tls -fPIE -Wdate-time
+CCFLAGS += $(GTK_CFLAGS)
 LDFLAGS += -fsanitize=undefined -fPIE
+LDFLAGS += $(GTK_LDFLAGS)
 
 # Debug
 # Décommentez la ligne qui correspond à votre intention

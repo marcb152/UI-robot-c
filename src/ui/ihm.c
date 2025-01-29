@@ -5,6 +5,7 @@
 #include "ihm.h"
 
 #include <stdlib.h>
+#include <gtk/gtk.h>
 
 
 void ihm_init()
