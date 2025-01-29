@@ -11,7 +11,7 @@
 #include "robot_app/robot.h"
 #include "robot_app/copilot.h"
 #include "ui/ihm.h"
-#include "ui/ui.h"
+#include "ui/ui_logic.h"
 
 /**
  * @mainpage Robot application mission 2.
