@@ -17,10 +17,10 @@ typedef enum {
   CMD_DESTROY_PATH,
   CMD_SHOW_PATH,
   CMD_START_PATH,
+  CMD_QUIT,
+  NB_COMMAND,
   CMD_SAVE_PATH,
   CMD_LOAD_PATH,
-  CMD_QUIT,
-  NB_COMMAND
 } menu_command;
 
 const char *menu_strings[] = {
@@ -29,7 +29,7 @@ const char *menu_strings[] = {
     "Destroy the path",         // CMD_DESTROY_PATH
     "Show the path",            // CMD_SHOW_PATH
     "Start to follow the path", // CMD_START_PATH
-    "Quit"                      // CMD_START_QUIT
+    "Quit"                      // CMD_QUIT
 };
 
 const char *success_messages[] = {

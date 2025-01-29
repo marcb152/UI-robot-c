@@ -49,5 +49,5 @@ int copilot_is_path_complete(void)
 
 step_t copilot_get_step(int i)
 {
-    
+
 }
