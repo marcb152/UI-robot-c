@@ -6,13 +6,14 @@
 #include "robot.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
-static const step_t * path;
-static int size;
+static step_t * path;
+static volatile int size;
 static int step_counter = 0;
 
-void copilot_init(const step_t * path_ptr, const int path_size)
+void copilot_init(step_t * path_ptr, int path_size)
 {
     step_counter = 0;
     size = path_size;
@@ -47,7 +48,54 @@ int copilot_is_path_complete(void)
     return step_counter == size;
 }
 
-step_t copilot_get_step(int i)
+void copilot_add_step(int index, step_t * step)
 {
+    if (path)
+    {
+        if (index >= 0 && index < size)
+        {
+            // TODO: free the previous step if it exists
+            path[index] = *step;
+        }
+        else
+        {
+            size++;
+            // Nouvelle array avec une plus grande taille
+            step_t* temp = calloc(size, sizeof(step_t));
+            // Copie des valeurs de l'ancienne array
+            for (int i = 0; i < size - 1; i++)
+            {
+                temp[i] = path[i];
+            }
+            // Nettoyage de l'ancienne array
+            free(path);
+            // Mise à jour du pointeur
+            path = temp;
+            // Ajout du nouveau step
+            path[size - 1] = *step;
+        }
+    }
+}
 
+step_t* copilot_get_step(int i)
+{
+    if (path && i >= 0 && i < size)
+    {
+        return &path[i];
+    }
+    return NULL;
+}
+
+void copilot_rm_step(int index)
+{
+    if (path && index >= 0 && index < size)
+    {
+        // Décalage des valeurs et suppression par écrasement
+        for (int i = index; i <= size; ++i)
+        {
+            path[i] = path[i + 1];
+        }
+        size--;
+        // TODO: free the last step
+    }
 }

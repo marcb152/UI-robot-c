@@ -23,14 +23,16 @@ typedef struct
     int speed;
 } step_t;
 
-void copilot_init(const step_t * path, const int size);
+void copilot_init(step_t * path, int size);
 
 void copilot_move(void);
 
 int copilot_is_path_complete(void);
 
-void copilot_add_step(int index, move_t step);
+void copilot_add_step(int index, step_t * step);
 
-step_t copilot_get_step(int i);
+step_t * copilot_get_step(int i);
+
+void copilot_rm_step(int index);
 
 #endif //COPILOT_H

@@ -56,6 +56,7 @@ LDFLAGS += -lm
 # Niveau de vérification
 CCFLAGS += -std=gnu11 -Wall -pedantic
 
+# Flags pour GTK
 GTK_CFLAGS = $$(pkg-config --cflags gtk+-3.0)
 GTK_LDFLAGS = $$(pkg-config --libs gtk+-3.0)
 

@@ -1,6 +1,6 @@
 // UI.c
 
-#include "ui.h"
+#include "ui_logic.h"
 #include "../robot_app/copilot.h"
 #include "../robot_app/pilot.h"
 #include <stdio.h>
@@ -125,14 +125,34 @@ static void handle_add_step() {
     print_failure_message(CMD_ADD_STEP);
     return;
   }
+  int step_nbr = handle_user_prompt_int(UI_ASK_STEP_NUMBER, 0, steps_number);
+  int speed = handle_user_prompt_int(UI_ASK_SPEED, 1, 100);
+  int type = handle_user_prompt_int(UI_ASK_TYPE_MOVE, 0, 1);
+  int distance = handle_user_prompt_int(UI_ASK_VALUE_FORWARD, 0, 100);
+  int angle = handle_user_prompt_int(UI_ASK_VALUE_TURN, 1, 3);
+  step_t step = { {type, angle, distance}, speed};
+  if (step_nbr == steps_number) {
+    steps_number++;
+  }
+  copilot_add_step(step_nbr, &step);
+}
 
-  // TODO
+static void handle_rm_step()
+{
+  if (steps_number == 0) {
+    print_failure_message(CMD_ADD_STEP);
+    return;
+  }
+  int step_nbr = handle_user_prompt_int(UI_ASK_STEP_NUMBER, 0, steps_number - 1);
+  copilot_rm_step(step_nbr);
+  steps_number--;
 }
 
 static void handle_destroy_path() {
   /*TODO: call copilot_destroy_path(); */
   /*HINT: steps_number is set to 0 on success to prevent adding steps to a
    * non-existing path */
+
 }
 
 static int handle_start_path() {
@@ -143,18 +163,18 @@ static int handle_start_path() {
 
 static void handle_show_path() {
   int i = 0;
-  step_t step;
+  step_t * step;
   if (steps_number > 0) {
     print_success_message(CMD_SHOW_PATH);
     for (i = 0; i < steps_number; i++) {
       step = copilot_get_step(i);
-      if (step.speed != 0) {
-        if (step.move.action == FORWARD)
-          printf("%d : FORWARD speed:%d distance:%d \n", i, step.speed,
-                 step.move.distance);
+      if (step->speed != 0) {
+        if (step->move.action == FORWARD)
+          printf("%d : FORWARD speed:%d distance:%d \n", i, step->speed,
+                 step->move.distance);
         else
-          printf("%d : ROTATION speed : %d turn: %d \n", i, step.speed,
-                 step.move.angle);
+          printf("%d : ROTATION speed : %d turn: %d \n", i, step->speed,
+                 step->move.angle);
       } else {
         printf("%d : No MOVE\n", i);
       }
@@ -182,25 +202,34 @@ extern int ui_start() {
     choice = handle_user_prompt_int(UI_ASK_CHOICE, 0, (NB_COMMAND - 1));
     switch (choice) {
     case CMD_CREATE_PATH:
+      // DONE
       handle_create_path();
       break;
     case CMD_ADD_STEP:
+      // DONE
       handle_add_step();
       break;
     case CMD_DESTROY_PATH:
+      // TODO
       handle_destroy_path();
+      // DONE
+      handle_rm_step();
       break;
     case CMD_SHOW_PATH:
+      // DONE
       handle_show_path();
       break;
     case CMD_START_PATH:
+      // TODO
       if (handle_start_path() == EXIT_SUCCESS)
         return EXIT_SUCCESS;
       break;
     case CMD_SAVE_PATH:
+      // TODO
       handle_save_path();
       break;
     case CMD_LOAD_PATH:
+      // TODO
       handle_load_path();
       break;
     case CMD_QUIT:
