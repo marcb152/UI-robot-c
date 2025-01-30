@@ -73,7 +73,7 @@ int main(int argc, char *argv[])
 
 static void app_loop()
 {
-  int size = 6;
+  // int size = 6;
   // move_t * path_ptr = calloc(size, sizeof(move_t));
   // path_ptr[0] = (move_t){FORWARD, {5}, 30};
   // path_ptr[1] = (move_t){ROTATION, {RIGHT}, 20};
@@ -88,7 +88,7 @@ static void app_loop()
     copilot_move();
     if (copilot_is_path_complete())
     {
-      size = 8;
+      // size = 8;
       // reallocarray(path_ptr, size, sizeof(move_t));
       // path_ptr[0] = (move_t){FORWARD, {5}, 30};
       // path_ptr[1] = (move_t){ROTATION, {RIGHT}, 20};

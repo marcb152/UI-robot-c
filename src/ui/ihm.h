@@ -9,10 +9,6 @@
 
 int gtk_draw(int argc, char** argv);
 
-void callback( GtkWidget *widget, gpointer data );
-
-gint delete_event( GtkWidget *widget, GdkEvent *event, gpointer data);
-
 static void on_button_clicked(GtkWidget *widget, gpointer data);
 
 static void on_combo_changed(GtkWidget *widget, gpointer data);

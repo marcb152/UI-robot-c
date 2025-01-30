@@ -1,29 +1,125 @@
 #include "ihm.h"
+#include "../robot_app/copilot.h"
+#include "../robot_app/pilot.h"
+#include "../robot_app/robot.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 
-static void on_button_clicked(GtkWidget *widget, gpointer data) {
-    g_print("Button clicked: %s\n", (char *)data);
+int size = 5;
+int step_index = 0;
+
+GtkWidget *window;
+GtkWidget *vbox, *grid1, *hbox2, *hbox3;
+GtkWidget *button_save, *button_add, *button_start, *button_quit;
+GtkWidget *slider1, *slider2, *slider3;
+GtkWidget *slider1_label, *slider2_label, *slider3_label;
+GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
+GtkWidget *separator1, *separator2;
+
+move_t *path;  // Déclaration sans initialisation
+
+void allocate_path(int size) {
+    path = calloc(size, sizeof(move_t));  // Allouer dynamiquement la mémoire
+    if (path != NULL) {
+        copilot_init(path, size);  // Initialiser le copilot avec le path et le nombre d'étapes
+    } else {
+        fprintf(stderr, "Memory allocation for path failed\n");
+    }
 }
 
-static void on_value_changed(GtkWidget *widget, gpointer data) {
+static void on_button_clicked(GtkWidget *widget, gpointer data) 
+{
+    g_print("Button clicked: %s\n", (char *)data);
+
+    if (widget == button_add) 
+    {
+        // Récupérer les valeurs des sliders au moment de l'ajout
+        gint speed_value = gtk_range_get_value(GTK_RANGE(slider1));
+        gint angle_value = gtk_range_get_value(GTK_RANGE(slider2));
+        gint distance_value = gtk_range_get_value(GTK_RANGE(slider3));
+
+        // Enregistrer ces valeurs dans l'étape actuelle
+        path[step_index].angle = angle_value;
+        path[step_index].distance = distance_value;
+
+        // Format du texte : "Step 1 | direction | angle | distance | vitesse"
+        char text[200];
+        const char *direction = (path[step_index].action == FORWARD) ? "FORWARD" : "ROTATION";
+        
+        // En fonction de l'action, on affiche l'angle ou la distance
+        int angle_or_distance = (path[step_index].action == FORWARD) ? path[step_index].distance : path[step_index].angle;
+        
+        // Ajouter le texte formaté à la listbox
+        snprintf(text, sizeof(text), "Step %d | %s | %d | %d", 
+                 step_index + 1, direction, path[step_index].angle, 
+                 path[step_index].distance);
+
+        label = gtk_label_new(text);
+        row = gtk_list_box_row_new();
+        gtk_container_add(GTK_CONTAINER(row), label);
+        gtk_list_box_insert(GTK_LIST_BOX(listbox), row, -1);  // Ajouter à la fin de la liste
+
+        step_index++;  // Incrémenter l'index
+
+        // Réafficher la fenêtre pour actualiser la listbox
+        gtk_widget_show_all(window);
+    } 
+    else if (widget == button_save) 
+    {
+        // Sauvegarder avec le bon nom de fichier
+        copilot_save("path.txt");
+    }
+    else if (widget == button_start || step_index == size) 
+    {
+        copilot_move();
+    }
+}
+
+static void on_value_changed(GtkWidget *widget, gpointer data) 
+{
     gint value = gtk_range_get_value(GTK_RANGE(widget));
     g_print("slider1 value: %d\n", value);
+
+    if (widget == slider1) 
+    {
+        speed_pct_t speed = (speed_pct_t)value;
+        robot_set_speed(speed, speed);
+    } 
+    else if (widget == slider2) 
+    {
+        path[step_index].angle = (int)value;
+    } 
+    else if (widget == slider3) 
+    {
+        path[step_index].distance = (int)value;
+    }
 }
 
-static void on_combo_changed(GtkWidget *widget, gpointer data) {
+static void on_combo_changed(GtkWidget *widget, gpointer data) 
+{
     gchar *text = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(widget));
     g_print("Selected option: %s\n", text);
-    g_free(text);
+
+    // Comparaison correcte des chaînes
+    if (strcmp(text, "FORWARD") == 0) 
+    {
+        path[step_index].action = FORWARD;
+    } 
+    else if (strcmp(text, "ROTATION") == 0) 
+    {
+        path[step_index].action = ROTATION;
+    }
+
+    g_free(text);  // Libérer la mémoire allouée pour 'text'
 }
 
 int gtk_draw(int argc, char *argv[]) {
-    GtkWidget *window;
-    GtkWidget *vbox, *grid1, *hbox2, *hbox3;
-    GtkWidget *button_save, *button_add, *slider1, *slider2, *slider3;
-    GtkWidget *slider1_label, *slider2_label, *slider3_label;
-    GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
-    GtkWidget *separator1, *separator2;
 
     gtk_init(&argc, &argv);
+
+    // Allouer dynamiquement la mémoire pour path
+    allocate_path(size);
 
     // Création de la fenêtre
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -48,11 +144,11 @@ int gtk_draw(int argc, char *argv[]) {
     button_add = gtk_button_new_with_label("ADD");
     g_signal_connect(button_add, "clicked", G_CALLBACK(on_button_clicked), "ADD");
 
-    GtkWidget *button2 = gtk_button_new_with_label("Bouton 2");
-    g_signal_connect(button_save, "clicked", G_CALLBACK(on_button_clicked), "SAVE");
-
-    GtkWidget *button_quit = gtk_button_new_with_label("Quit");
+    button_quit = gtk_button_new_with_label("QUIT");
     g_signal_connect(button_quit, "clicked", G_CALLBACK(gtk_main_quit), "QUIT");
+
+    button_start = gtk_button_new_with_label("START");
+    g_signal_connect(button_quit, "clicked", G_CALLBACK(copilot_move), "START");
 
     // Création du slider1 allant de 0 à 100
     slider1 = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
@@ -71,7 +167,7 @@ int gtk_draw(int argc, char *argv[]) {
     gtk_range_set_value(GTK_RANGE(slider3), 0);
     g_signal_connect(slider3, "value-changed", G_CALLBACK(on_value_changed), NULL);
     slider3_label = gtk_label_new("Distance");
-    
+
     // Création du menu déroulant avec FORWARD et ROTATION
     combo_box = gtk_combo_box_text_new();
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), "FORWARD");
@@ -89,15 +185,7 @@ int gtk_draw(int argc, char *argv[]) {
     listbox = gtk_list_box_new();
     gtk_container_add(GTK_CONTAINER(scrollable_window), listbox);
 
-    for (int i = 1; i <= 20; i++)
-    {
-        char text[50];
-        snprintf(text, sizeof(text), "Item %d", i);
-        label = gtk_label_new(text);
-        row = gtk_list_box_row_new();
-        gtk_container_add(GTK_CONTAINER(row), label);
-        gtk_list_box_insert(GTK_LIST_BOX(listbox), row, -1);
-    }
+    // Ne plus utiliser la boucle 'for' qui remplissait la listbox initialement
 
     // Réduire l'espace entre les lignes et les colonnes dans la grille
     gtk_grid_set_row_spacing(GTK_GRID(grid1), 5);  // Espacement entre les lignes
@@ -115,10 +203,10 @@ int gtk_draw(int argc, char *argv[]) {
     // Réduire la marge autour de la fenêtre
     gtk_container_set_border_width(GTK_CONTAINER(window), 10);
 
-
     // Ajout des widgets dans la grille (placement dans les cellules)
     gtk_grid_attach(GTK_GRID(grid1), button_save, 0, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(grid1), button_add, 0, 1, 1, 2);
+    gtk_grid_attach(GTK_GRID(grid1), button_start, 0, 5, 20, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider1, 3, 1, 18, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider2, 1, 2, 2, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider3, 3, 2, 18, 1);
