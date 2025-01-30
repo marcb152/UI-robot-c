@@ -60,10 +60,24 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         gtk_container_add(GTK_CONTAINER(row), label);
         gtk_list_box_insert(GTK_LIST_BOX(listbox), row, -1);  // Ajouter à la fin de la liste
 
+        printf("Contenu de path :\n");
+
         step_index++;  // Incrémenter l'index
 
         // Réafficher la fenêtre pour actualiser la listbox
         gtk_widget_show_all(window);
+
+        for (int i = 0; i < step_index; i++)  // Parcours de toutes les étapes ajoutées
+        {
+            const char *direction = (path[i].action == FORWARD) ? "FORWARD" : "ROTATION";
+            
+            // En fonction de l'action, on affiche l'angle ou la distance
+            int angle_or_distance = (path[i].action == FORWARD) ? path[i].distance : path[i].angle;
+            
+            // Affichage formaté
+            printf("Step %d | %s | Angle: %d | Distance: %d\n",
+                i + 1, direction, path[i].angle, path[i].distance);
+        }
     } 
     else if (widget == button_save) 
     {
