@@ -1,4 +1,4 @@
-#include <gtk/gtk.h>
+#include "ihm.h"
 
 static void on_button_clicked(GtkWidget *widget, gpointer data) {
     g_print("Button clicked: %s\n", (char *)data);

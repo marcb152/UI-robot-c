@@ -6,8 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "../utils.h"
-
 static int steps_number = 0;
 
 // Menu options
@@ -17,10 +15,10 @@ typedef enum {
   CMD_DESTROY_PATH,
   CMD_SHOW_PATH,
   CMD_START_PATH,
-  CMD_QUIT,
-  NB_COMMAND,
   CMD_SAVE_PATH,
   CMD_LOAD_PATH,
+  CMD_QUIT,
+  NB_COMMAND,
 } menu_command;
 
 const char *menu_strings[] = {
@@ -29,6 +27,8 @@ const char *menu_strings[] = {
     "Destroy the path",         // CMD_DESTROY_PATH
     "Show the path",            // CMD_SHOW_PATH
     "Start to follow the path", // CMD_START_PATH
+    "Save path to file",        // CMD_SAVE_PATH
+    "Load path from file",      // CMD_LOAD_PATH
     "Quit"                      // CMD_QUIT
 };
 
@@ -38,6 +38,8 @@ const char *success_messages[] = {
     "Path destroyed.",                  // CMD_PATH_DESTROYED
     "The current path is :",            // CMD_SHOW_PATH
     "Let's go \n press CTRL+C to exit", // CMD_START_PATH
+    "Path saved to file",               // CMD_SAVE_PATH
+    "Path loaded from file",            // CMD_LOAD_PATH
     "Bye"                               // CMD_QUIT
 };
 
@@ -47,6 +49,8 @@ const char *failure_messages[] = {
     "path already destroyed",                  // CMD_DESTROY_PATH
     "Path is not defined",                     // CMD_SHOW_PATH
     "Path is not defined",                     // CMD_START_PATH
+    "Saving failed",                           // CMD_SAVE_PATH
+    "Loading failed",                          // CMD_LOAD_PATH
     "" // No failure message for CMD_QUIT
 };
 
@@ -107,12 +111,15 @@ static void handle_create_path() {
    * or failure messages accordingly */
   /*HINT: update steps_number on success or set to 0 on failure */
 
-  steps_number = handle_user_prompt_int(UI_ASK_SIZE_PATH, 1, 100);
-  step_t *path = calloc(steps_number, sizeof(step_t));
-  if (steps_number > 0) {
-    copilot_init(path, steps_number);
+  int temp = handle_user_prompt_int(UI_ASK_SIZE_PATH, 1, 100);
+  step_t *path = calloc(temp, sizeof(step_t));
+  if (temp > 0) {
+    // Initialize copilot with the path and the number of steps
+    copilot_init(path, temp);
+    steps_number = temp;
     print_success_message(CMD_CREATE_PATH);
   } else {
+    steps_number = 0;
     print_failure_message(CMD_CREATE_PATH);
   }
 }
@@ -128,13 +135,19 @@ static void handle_add_step() {
   int step_nbr = handle_user_prompt_int(UI_ASK_STEP_NUMBER, 0, steps_number);
   int speed = handle_user_prompt_int(UI_ASK_SPEED, 1, 100);
   int type = handle_user_prompt_int(UI_ASK_TYPE_MOVE, 0, 1);
-  int distance = handle_user_prompt_int(UI_ASK_VALUE_FORWARD, 0, 100);
-  int angle = handle_user_prompt_int(UI_ASK_VALUE_TURN, 1, 3);
-  step_t step = { {type, angle, distance}, speed};
+  int dst_or_angle =
+    type == FORWARD ?
+      handle_user_prompt_int(UI_ASK_VALUE_FORWARD, 0, 100) :
+      handle_user_prompt_int(UI_ASK_VALUE_TURN, 1, 3);
+  // We define the same value for distance and angle since we only need one of them
+  // Also because I don't care
+  step_t step = { {type, dst_or_angle, dst_or_angle}, speed};
+  // If the user wants to add a step at the end of the path that doesn't exist yet
   if (step_nbr == steps_number) {
     steps_number++;
   }
   copilot_add_step(step_nbr, &step);
+  print_success_message(CMD_ADD_STEP);
 }
 
 static void handle_rm_step()
@@ -146,19 +159,41 @@ static void handle_rm_step()
   int step_nbr = handle_user_prompt_int(UI_ASK_STEP_NUMBER, 0, steps_number - 1);
   copilot_rm_step(step_nbr);
   steps_number--;
+  print_success_message(CMD_DESTROY_PATH);
 }
 
 static void handle_destroy_path() {
   /*TODO: call copilot_destroy_path(); */
   /*HINT: steps_number is set to 0 on success to prevent adding steps to a
    * non-existing path */
-
+  copilot_dispose();
+  steps_number = 0;
+  print_success_message(CMD_DESTROY_PATH);
 }
 
 static int handle_start_path() {
   /*TODO: exit ui to start path */
   /*HINT: how could you detect an empty path? (created but with no added steps?)
    */
+  if (steps_number <= 0)
+  {
+    print_failure_message(CMD_START_PATH);
+    return EXIT_FAILURE;
+  }
+  // We check that every step as a defined speed
+  int i = 0;
+  step_t * step;
+  for (i = 0; i < steps_number; i++)
+  {
+    step = copilot_get_step(i);
+    if (step->speed == 0)
+    {
+      print_failure_message(CMD_START_PATH);
+      return EXIT_FAILURE;
+    }
+  }
+  // Every check passed, we can start the path
+  return EXIT_SUCCESS;
 }
 
 static void handle_show_path() {
@@ -186,12 +221,28 @@ static void handle_show_path() {
 
 static void handle_save_path()
 {
-
+  if (copilot_save("path.txt") != -1)
+  {
+    print_success_message(CMD_SAVE_PATH);
+  }
+  else
+  {
+    print_failure_message(CMD_SAVE_PATH);
+  }
 }
 
 static void handle_load_path()
 {
-
+  const int temp = copilot_load("path.txt");
+  if (temp != -1)
+  {
+    steps_number = temp;
+    print_success_message(CMD_LOAD_PATH);
+  }
+  else
+  {
+    print_failure_message(CMD_LOAD_PATH);
+  }
 }
 
 extern int ui_start() {

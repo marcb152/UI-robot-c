@@ -13,11 +13,11 @@ void callback( GtkWidget *widget, gpointer data );
 
 gint delete_event( GtkWidget *widget, GdkEvent *event, gpointer data);
 
-void on_button_clicked(GtkWidget *widget, gpointer data);
+static void on_button_clicked(GtkWidget *widget, gpointer data);
 
-void on_combo_changed(GtkWidget *widget, gpointer data);
+static void on_combo_changed(GtkWidget *widget, gpointer data);
 
-void on_value_changed(GtkWidget *widget, gpointer data);
+static void on_value_changed(GtkWidget *widget, gpointer data);
 
 
 #endif //IHM_H

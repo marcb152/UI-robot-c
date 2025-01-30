@@ -99,3 +99,112 @@ void copilot_rm_step(int index)
         // TODO: free the last step
     }
 }
+
+void copilot_dispose(void)
+{
+    free(path);
+    size = 0;
+    step_counter = 0;
+}
+
+int copilot_save(char *filename)
+{
+    // Create or overwrite the file
+    FILE *file_ptr = fopen(filename, "w");
+
+    // Error handling
+    if (!file_ptr)
+    {
+        return -1;
+    }
+
+    /*
+     * FORMAT OF THE FILE
+     * 1. Number of steps
+     * 2. For each step:
+     *   - Type of move
+     *   - Speed
+     *   - Distance or angle (based on type)
+     */
+    // Loop over the steps and write them to the file
+    int i = 0;
+    step_t * step;
+    if (size > 0)
+    {
+        fprintf(file_ptr, "%d\n", size);
+        for (i = 0; i < size; i++)
+        {
+            step = copilot_get_step(i);
+            // TODO: check if the user didn't messed up the input values
+            fprintf(file_ptr, "%d %d %d\n",
+              step->move.action,
+              step->speed,
+              step->move.action == FORWARD ? step->move.distance : step->move.angle);
+        }
+        fclose(file_ptr);
+        return 0;
+    }
+    fclose(file_ptr);
+    return -1;
+}
+
+int copilot_load(char *filename)
+{
+    // Open the file
+    FILE *file_ptr = fopen(filename, "r");
+
+    // Error handling
+    if (!file_ptr)
+    {
+        return -1;
+    }
+
+    /*
+     * FORMAT OF THE FILE
+     * 1. Number of steps
+     * 2. For each step:
+     *   - Type of move
+     *   - Speed
+     *   - Distance or angle (based on type)
+     */
+    // Read the number of steps
+    int temp;
+    if (fscanf(file_ptr, "%d\n", &temp) != 1)
+    {
+        fclose(file_ptr);
+        return -1;
+    }
+
+    // Allocate memory for the path
+    path = calloc(temp, sizeof(step_t));
+    if (!path)
+    {
+        fclose(file_ptr);
+        return -1;
+    }
+
+    // Read each step from the file
+    for (int i = 0; i < temp; i++)
+    {
+        int action, speed, value;
+        fscanf(file_ptr, "%d %d %d\n", &action, &speed, &value);
+        path[i].move.action = action;
+        path[i].speed = speed;
+        if (action == FORWARD)
+        {
+            path[i].move.distance = value;
+        }
+        else
+        {
+            path[i].move.angle = value;
+        }
+    }
+
+    // Initialize copilot with the loaded path
+    step_counter = 0;
+    size = temp;
+
+    // Close the file
+    fclose(file_ptr);
+    return size;
+}
