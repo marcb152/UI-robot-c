@@ -32,9 +32,9 @@ void destroy (GtkWidget* widget, gpointer data)
 {
     if(widget == button_quit || widget == window)
     {
-        return_value = 1;    gtk_list_box_set_show_separators(GTK_LIST_BOX(listbox), TRUE);
+        return_value = 1;
     }
-    gtk_widget_destroy(window);    gtk_list_box_set_show_separators(GTK_LIST_BOX(listbox), TRUE);
+    gtk_widget_destroy(window);
     gtk_main_quit();
 }
 
