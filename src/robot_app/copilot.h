@@ -17,15 +17,6 @@
  */
 #define DELAY 100000
 
-/** @brief Structure representing a step in the path.
- * A step is composed of a move and a speed.
- */
-typedef struct
-{
-    move_t move;
-    int speed;
-} step_t;
-
 /**
  * Initializes the copilot with the given path and size.
  *

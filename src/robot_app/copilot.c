@@ -23,7 +23,7 @@ void copilot_init(step_t * path_ptr, int path_size)
 void copilot_move(void)
 {
     robot_status_t my_status = robot_get_status();
-    pilot_start_move(&path[step_counter % size].move);
+    pilot_start_move(&path[step_counter % size]);
     fprintf(stdout, "codeurs: g = %d, d = %d\n", my_status.left_encoder,
             my_status.right_encoder);
     fprintf(stdout, "proxy: g = %d, c = %d, d = %d\n", my_status.left_sensor,

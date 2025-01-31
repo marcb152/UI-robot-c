@@ -10,14 +10,15 @@ static int step_index = 0;
 GtkWidget *window;
 GtkWidget *vbox, *grid1, *hbox2, *hbox3;
 GtkWidget *button_save, *button_load, *button_add, *button_start, *button_quit;
-GtkWidget *slider1, *slider2, *slider3;
-GtkWidget *slider1_label, *slider2_label, *slider3_label;
+GtkWidget *slider_speed, *slider_angle, *slider_distance;
+GtkWidget *lbl_slider_speed, *lbl_slider_angle, *lbl_slider_dst;
 GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
 GtkWidget *separator1, *separator2;
 
 step_t * path;  // Déclaration sans initialisation
 
-void allocate_path(int size) {
+void allocate_path(int size)
+{
     path = calloc(size, sizeof(move_t));  // Allouer dynamiquement la mémoire
     if (path != NULL) {
         copilot_init(path, size);  // Initialiser le copilot avec le path et le nombre d'étapes
@@ -39,9 +40,9 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
     if (widget == button_add) 
     {
         // Récupérer les valeurs des sliders au moment de l'ajout
-        gint speed_value = gtk_range_get_value(GTK_RANGE(slider1));
-        gint angle_value = gtk_range_get_value(GTK_RANGE(slider2));
-        gint distance_value = gtk_range_get_value(GTK_RANGE(slider3));
+        gint speed_value = gtk_range_get_value(GTK_RANGE(slider_speed));
+        gint angle_value = gtk_range_get_value(GTK_RANGE(slider_angle));
+        gint distance_value = gtk_range_get_value(GTK_RANGE(slider_distance));
         gint action_value = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
 
         step_t step = { {action_value, angle_value, distance_value}, speed_value };
@@ -91,8 +92,8 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
     }
 }
 
-int gtk_draw(int argc, char *argv[]) {
-
+int gtk_draw(int argc, char *argv[])
+{
     gtk_init(&argc, &argv);
 
     // Allouer dynamiquement la mémoire pour path
@@ -131,19 +132,19 @@ int gtk_draw(int argc, char *argv[]) {
     g_signal_connect(button_start, "clicked", G_CALLBACK(destroy), "START");
 
     // Création du slider1 allant de 0 à 100
-    slider1 = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
-    gtk_range_set_value(GTK_RANGE(slider1), 50);
-    slider1_label = gtk_label_new("Speed");
+    slider_speed = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
+    gtk_range_set_value(GTK_RANGE(slider_speed), 50);
+    lbl_slider_speed = gtk_label_new("Speed");
 
     // Création du slider2 pour l'angle
-    slider2 = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, -360, 360, 1);
-    gtk_range_set_value(GTK_RANGE(slider2), 0);
-    slider2_label = gtk_label_new("Angle");
+    slider_angle = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, -360, 360, 1);
+    gtk_range_set_value(GTK_RANGE(slider_angle), 0);
+    lbl_slider_angle = gtk_label_new("Angle");
 
     // Création du slider3 pour la distance
-    slider3 = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 1000, 1);
-    gtk_range_set_value(GTK_RANGE(slider3), 0);
-    slider3_label = gtk_label_new("Distance");
+    slider_distance = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 1000, 1);
+    gtk_range_set_value(GTK_RANGE(slider_distance), 0);
+    lbl_slider_dst = gtk_label_new("Distance");
 
     // Création du menu déroulant avec FORWARD et ROTATION
     combo_box = gtk_combo_box_text_new();
@@ -168,9 +169,9 @@ int gtk_draw(int argc, char *argv[]) {
     gtk_grid_set_column_spacing(GTK_GRID(grid1), 5);  // Espacement entre les colonnes
 
     // Réduire la largeur du slider
-    gtk_widget_set_size_request(slider1, 200, -1);  // 200 pixels de large, hauteur auto
-    gtk_widget_set_size_request(slider2, 200, -1);
-    gtk_widget_set_size_request(slider3, 200, -1);
+    gtk_widget_set_size_request(slider_speed, 200, -1);  // 200 pixels de large, hauteur auto
+    gtk_widget_set_size_request(slider_angle, 200, -1);
+    gtk_widget_set_size_request(slider_distance, 200, -1);
 
     // Réduire la hauteur des séparateurs
     gtk_widget_set_size_request(separator1, -1, 1);  // Hauteur réduite
@@ -184,14 +185,14 @@ int gtk_draw(int argc, char *argv[]) {
     gtk_grid_attach(GTK_GRID(grid1), button_load, 1, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(grid1), button_add, 0, 1, 1, 2);
     gtk_grid_attach(GTK_GRID(grid1), button_start, 0, 5, 20, 1);
-    gtk_grid_attach(GTK_GRID(grid1), slider1, 3, 1, 18, 1);
-    gtk_grid_attach(GTK_GRID(grid1), slider2, 1, 2, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid1), slider3, 3, 2, 18, 1);
+    gtk_grid_attach(GTK_GRID(grid1), slider_speed, 3, 1, 18, 1);
+    gtk_grid_attach(GTK_GRID(grid1), slider_angle, 1, 2, 2, 1);
+    gtk_grid_attach(GTK_GRID(grid1), slider_distance, 3, 2, 18, 1);
     gtk_grid_attach(GTK_GRID(grid1), combo_box, 1, 1, 2, 1);
     gtk_grid_attach(GTK_GRID(grid1), text_entry, 2, 0, 20, 1);
-    gtk_grid_attach(GTK_GRID(grid1), slider1_label, 4, 1, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid1), slider2_label, 1, 2, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid1), slider3_label, 4, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid1), lbl_slider_speed, 4, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid1), lbl_slider_angle, 1, 2, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid1), lbl_slider_dst, 4, 2, 1, 1);
 
     // Création des boîtes horizontales pour les autres boutons
     hbox2 = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);

@@ -9,54 +9,53 @@
 #include "robot.h"
 
 #define TURN_SENSOR_ROTATION 450
-#define FULL_SPEED 100
 
 static move_status_t robot_moving;
 static int target_pos;
 static wheel_t reference_wheel;
 
-void pilot_start_move(const move_t *a_move)
+void pilot_start_move(const step_t *a_step)
 {
     robot_reset_wheel_pos();
-    switch (a_move->action)
+    switch (a_step->move.action)
     {
         case FORWARD:
             robot_moving = MOVE_FORWARDING;
-            robot_set_speed(FULL_SPEED, FULL_SPEED);
+            robot_set_speed(a_step->speed, a_step->speed);
             reference_wheel = LEFT_WHEEL;
-            target_pos = a_move->distance * 10;
+            target_pos = a_step->move.distance * 10;
             break;
         case ROTATION:
             robot_moving = MOVE_TURNING;
-            switch (a_move->angle)
+            switch (a_step->move.angle)
             {
                 case LEFT:
-                    robot_set_speed(0, FULL_SPEED);
+                    robot_set_speed(0, a_step->speed);
                     reference_wheel = RIGHT_WHEEL;
                     target_pos = TURN_SENSOR_ROTATION;
                     break;
                 case RIGHT:
-                    robot_set_speed(FULL_SPEED, 0);
+                    robot_set_speed(a_step->speed, 0);
                     reference_wheel = LEFT_WHEEL;
                     target_pos = TURN_SENSOR_ROTATION;
                     break;
                 case U_TURN:
-                    robot_set_speed(FULL_SPEED, 0);
+                    robot_set_speed(a_step->speed, 0);
                     reference_wheel = LEFT_WHEEL;
                     target_pos = 2 * TURN_SENSOR_ROTATION;
                     break;
                 default:
-                    if (a_move->angle <= 0)
+                    if (a_step->move.angle <= 0)
                     {
                         reference_wheel = RIGHT_WHEEL;
-                        robot_set_speed(0, FULL_SPEED);
+                        robot_set_speed(0, a_step->speed);
                     }
                     else
                     {
                         reference_wheel = LEFT_WHEEL;
-                        robot_set_speed(FULL_SPEED, 0);
+                        robot_set_speed(a_step->speed, 0);
                     }
-                    target_pos = abs(a_move->angle) * TURN_SENSOR_ROTATION / 90;
+                    target_pos = abs(a_step->move.angle) * TURN_SENSOR_ROTATION / 90;
             }
             break;
     }

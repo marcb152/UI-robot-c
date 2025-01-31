@@ -32,7 +32,17 @@ typedef struct
     int distance;
 } move_t;
 
-void pilot_start_move(const move_t* a_move);
+/** @brief Structure representing a step in the path.
+ * A step is composed of a move and a speed.
+ */
+typedef struct
+{
+    move_t move;
+    int speed;
+} step_t;
+
+
+void pilot_start_move(const step_t * a_step);
 
 move_status_t pilot_stop_at_target(void);
 
