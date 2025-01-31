@@ -10,7 +10,7 @@ static int return_value = 0;
 
 GtkWidget *window;
 GtkWidget *vbox, *grid1, *hbox2, *hbox3;
-GtkWidget *button_save, *button_load, *button_add, *button_start, *button_quit;
+GtkWidget *button_save, *button_load, *button_add, *button_start, *button_quit, *button_delete;
 GtkWidget *slider_speed, *slider_angle, *slider_distance;
 GtkWidget *lbl_slider_speed, *lbl_slider_angle, *lbl_slider_dst;
 GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
@@ -86,6 +86,20 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
     }
 }
 
+void delete_step(GtkWidget *widget, gpointer data)
+{
+    void* selected_row = gtk_list_box_get_selected_row(GTK_LIST_BOX(listbox));
+    if (!selected_row)
+    {
+        return;
+    }
+    int index = gtk_list_box_row_get_index(GTK_LIST_BOX_ROW(selected_row));
+    copilot_rm_step(index);
+    gtk_container_remove(GTK_CONTAINER(listbox), selected_row);
+    fprintf(stdout,"%d", index);
+    step_index--;
+}
+
 void add_line(int index)
 {
     char text[200];
@@ -141,6 +155,10 @@ int gtk_draw(int argc, char *argv[])
     button_start = gtk_button_new_with_label("START");
     g_signal_connect(button_start, "clicked", G_CALLBACK(destroy), "START");
 
+    button_delete = gtk_button_new_with_label("DEL");
+    g_signal_connect(button_delete, "clicked", G_CALLBACK(delete_step), "DEL");
+
+
     // Création du slider1 allant de 0 à 100
     slider_speed = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
     gtk_range_set_value(GTK_RANGE(slider_speed), 50);
@@ -189,7 +207,8 @@ int gtk_draw(int argc, char *argv[])
     // Ajout des widgets dans la grille (placement dans les cellules)
     gtk_grid_attach(GTK_GRID(grid1), button_save, 0, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(grid1), button_load, 1, 0, 1, 1);
-    gtk_grid_attach(GTK_GRID(grid1), button_add, 0, 1, 1, 2);
+    gtk_grid_attach(GTK_GRID(grid1), button_add, 0, 1, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid1), button_delete, 0, 2, 1, 1);
     gtk_grid_attach(GTK_GRID(grid1), button_start, 0, 5, 20, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider_speed, 3, 1, 18, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider_angle, 1, 2, 2, 1);
