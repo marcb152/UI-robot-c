@@ -43,24 +43,19 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         gint speed_value = gtk_range_get_value(GTK_RANGE(slider1));
         gint angle_value = gtk_range_get_value(GTK_RANGE(slider2));
         gint distance_value = gtk_range_get_value(GTK_RANGE(slider3));
+        gint action_value = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
 
-
-        // Enregistrer ces valeurs dans l'étape actuelle
-        path[step_index].move.angle = angle_value;
-        path[step_index].move.distance = distance_value;
-        path[step_index].speed = speed_value;
+        step_t step = { {action_value, distance_value, angle_value}, speed_value };
 
         // Format du texte : "Step 1 | direction | angle | distance | vitesse"
         char text[200];
-        const char *direction = (path[step_index].move.action == FORWARD) ? "FORWARD" : "ROTATION";
+        const char *direction = (action_value == FORWARD) ? "FORWARD" : "ROTATION";
         
         // En fonction de l'action, on affiche l'angle ou la distance
-        int angle_or_distance = (path[step_index].move.action == FORWARD) ? path[step_index].move.distance : path[step_index].move.angle;
+        int angle_or_distance = (action_value == FORWARD) ? distance_value : angle_value;
         
         // Ajouter le texte formaté à la listbox
-        snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", 
-                 step_index + 1, direction, path[step_index].move.angle, 
-                 path[step_index].move.distance, path[step_index].speed);
+        snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", step_index + 1, direction, angle_value, distance_value, speed_value);
 
         label = gtk_label_new(text);
         row = gtk_list_box_row_new();
@@ -69,21 +64,27 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
 
         printf("Contenu de path :\n");
 
-        step_index++;  // Incrémenter l'index
+        // If the user wants to add a step at the end of the path that doesn't exist yet
+        step_index++;
+
+        if (step_index == size) {
+            size++;
+        }
+        copilot_add_step(step_index, &step);
 
         // Réafficher la fenêtre pour actualiser la listbox
         gtk_widget_show_all(window);
 
         for (int i = 0; i < step_index; i++)  // Parcours de toutes les étapes ajoutées
         {
-            const char *direction = (path[i].move.action == FORWARD) ? "FORWARD" : "ROTATION";
+            const char *direction = (copilot_get_step(i)->move.action == FORWARD) ? "FORWARD" : "ROTATION";
             
             // En fonction de l'action, on affiche l'angle ou la distance
-            int angle_or_distance = (path[i].move.action == FORWARD) ? path[i].move.distance : path[i].move.angle;
+            int angle_or_distance = (copilot_get_step(i)->move.action == FORWARD) ? copilot_get_step(i)->move.distance : copilot_get_step(i)->move.angle;
             
             // Affichage
             printf("Step %d | %s | Angle: %d | Distance: %d | Vitesse: %d\n",
-                i + 1, direction, path[i].move.angle, path[i].move.distance, path[i].speed);
+                i + 1, direction, copilot_get_step(i)->move.angle, copilot_get_step(i)->move.distance, copilot_get_step(i)->speed);
         }
     } 
     else if (widget == button_save) 
@@ -109,11 +110,11 @@ static void on_value_changed(GtkWidget *widget, gpointer data)
     } 
     else if (widget == slider2) 
     {
-        path[step_index].move.angle = (int)value;
+        copilot_get_step(step_index)->move.angle = (int)value;
     } 
     else if (widget == slider3) 
     {
-        path[step_index].move.distance = (int)value;
+        copilot_get_step(step_index)->move.distance = (int)value;
     }
 }
 
@@ -125,11 +126,11 @@ static void on_combo_changed(GtkWidget *widget, gpointer data)
     // Comparaison correcte des chaînes
     if (strcmp(text, "FORWARD") == 0) 
     {
-        path[step_index].move.action = FORWARD;
+        copilot_get_step(step_index)->move.action = FORWARD;
     } 
     else if (strcmp(text, "ROTATION") == 0) 
     {
-        path[step_index].move.action = ROTATION;
+        copilot_get_step(step_index)->move.action = ROTATION;
     }
 
     g_free(text);  // Libérer la mémoire allouée pour 'text'
