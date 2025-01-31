@@ -17,7 +17,7 @@ GtkWidget *slider1_label, *slider2_label, *slider3_label;
 GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
 GtkWidget *separator1, *separator2;
 
-move_t *path;  // Déclaration sans initialisation
+step_t *path;  // Déclaration sans initialisation
 
 void allocate_path(int size) {
     path = calloc(size, sizeof(move_t));  // Allouer dynamiquement la mémoire

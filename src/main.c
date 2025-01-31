@@ -42,9 +42,6 @@ static void sigint_handler(int dummy) { running = STOPPED; }
 
 int main(int argc, char *argv[])
 {
- 
-  //gtk_draw(argc, argv);
-
   /* start the robot simulator and check its good starting */
   if (robot_start())
   {
@@ -59,6 +56,8 @@ int main(int argc, char *argv[])
 
   /* Ctrl+C to stop the program. */
   signal(SIGINT, sigint_handler);
+
+  gtk_draw(argc, argv);
   /* main loop */
   app_loop();
   /* close the robot simulator */
@@ -74,7 +73,8 @@ int main(int argc, char *argv[])
 static void app_loop()
 {
 
-  ui_start();
+
+  //ui_start();
 
   // int size = 6;
   // move_t * path_ptr = calloc(size, sizeof(move_t));
