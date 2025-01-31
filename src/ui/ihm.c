@@ -31,7 +31,7 @@ void allocate_path(int size)
 
 void destroy (GtkWidget* widget, gpointer data)
 {
-    if(widget == button_quit || widget == window)
+    if(widget == button_quit)
     {
         return_value = 1;
     }
