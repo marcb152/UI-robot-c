@@ -77,6 +77,7 @@ static void app_loop()
     copilot_move();
     if(copilot_is_path_complete())
     {
+      copilot_stop();
       gtk_draw(NULL, NULL);
     }
   }

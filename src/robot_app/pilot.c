@@ -66,7 +66,6 @@ move_status_t pilot_stop_at_target(void)
     if (robot_get_wheel_position(reference_wheel) >= target_pos)
     {
         robot_moving = MOVE_DONE;
-        robot_set_speed(0, 0);
     }
     return robot_moving;
 }
@@ -74,4 +73,10 @@ move_status_t pilot_stop_at_target(void)
 move_status_t get_status(void)
 {
     return robot_moving;
+}
+
+void pilot_stop(void)
+{
+    robot_moving = MOVE_DONE;
+    robot_set_speed(0, 0);
 }

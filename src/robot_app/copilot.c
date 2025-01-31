@@ -208,3 +208,8 @@ int copilot_load(char *filename)
     fclose(file_ptr);
     return size;
 }
+
+void copilot_stop(void)
+{
+
+}

@@ -48,4 +48,6 @@ move_status_t pilot_stop_at_target(void);
 
 move_status_t get_status(void);
 
+void pilot_stop(void);
+
 #endif //PILOT_H

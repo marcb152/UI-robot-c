@@ -116,4 +116,6 @@ int copilot_save(char * filename);
  */
 int copilot_load(char * filename);
 
+void copilot_stop(void);
+
 #endif //COPILOT_H
