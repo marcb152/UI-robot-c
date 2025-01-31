@@ -92,8 +92,9 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
             {
                 char text[200];
                 step_t * step = copilot_get_step(i);
+                const char *direction = (step->move.action == FORWARD) ? "FORWARD" : "ROTATION";
                 
-                snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", i + 1, step->move.action, step->move.angle, step->move.distance, step->speed);
+                snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", i + 1, direction, step->move.angle, step->move.distance, step->speed);
 
                 label = gtk_label_new(text);
                 row = gtk_list_box_row_new();
