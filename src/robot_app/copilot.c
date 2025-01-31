@@ -211,5 +211,6 @@ int copilot_load(char *filename)
 
 void copilot_stop(void)
 {
-
+    robot_set_speed(0, 0);
+    step_counter = 0;
 }
