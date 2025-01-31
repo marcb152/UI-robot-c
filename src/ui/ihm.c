@@ -6,6 +6,7 @@
 #include <unistd.h>
 
 static int step_index = 0;
+static int return_value = 0;
 
 GtkWidget *window;
 GtkWidget *vbox, *grid1, *hbox2, *hbox3;
@@ -29,6 +30,10 @@ void allocate_path(int size)
 
 void destroy (GtkWidget* widget, gpointer data)
 {
+    if(widget == button_quit)
+    {
+        return_value = 1;
+    }
     gtk_widget_destroy(window);
     gtk_main_quit();
 }
@@ -239,5 +244,5 @@ int gtk_draw(int argc, char *argv[])
     // Lancement de la boucle principale
     gtk_main();
 
-    return 0;
+    return return_value;
 }

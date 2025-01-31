@@ -70,15 +70,20 @@ int main(int argc, char *argv[])
  */
 static void app_loop()
 {
-  gtk_draw(NULL,NULL);
+  int stop = gtk_draw(0, NULL);
 
   while (running)
   {
+    if(stop)
+    {
+      running = STOPPED;
+      break;
+    }
     copilot_move();
     if(copilot_is_path_complete())
     {
       copilot_stop();
-      gtk_draw(NULL, NULL);
+      stop = gtk_draw(NULL, NULL);
     }
   }
 }
