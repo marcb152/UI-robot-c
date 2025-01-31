@@ -9,13 +9,13 @@ static int step_index = 0;
 
 GtkWidget *window;
 GtkWidget *vbox, *grid1, *hbox2, *hbox3;
-GtkWidget *button_save, *button_add, *button_start, *button_quit;
+GtkWidget *button_save, *button_load, *button_add, *button_start, *button_quit;
 GtkWidget *slider1, *slider2, *slider3;
 GtkWidget *slider1_label, *slider2_label, *slider3_label;
 GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
 GtkWidget *separator1, *separator2;
 
-step_t *path;  // Déclaration sans initialisation
+step_t * path;  // Déclaration sans initialisation
 
 void allocate_path(int size) {
     path = calloc(size, sizeof(move_t));  // Allouer dynamiquement la mémoire
@@ -79,6 +79,16 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         // Sauvegarder avec le bon nom de fichier
         copilot_save("path.txt");
     }
+    else if (widget == button_load)
+    {
+        // Chargement avec le bon nom de fichier
+        const int temp = copilot_load("path.txt");
+        if (temp != -1)
+        {
+            step_index = temp;
+            // TODO: Actualiser la listbox
+        }
+    }
 }
 
 int gtk_draw(int argc, char *argv[]) {
@@ -107,7 +117,10 @@ int gtk_draw(int argc, char *argv[]) {
     // Création des boutons
     button_save = gtk_button_new_with_label("SAVE");
     g_signal_connect(button_save, "clicked", G_CALLBACK(on_button_clicked), "SAVE");
-    
+
+    button_load = gtk_button_new_with_label("LOAD");
+    g_signal_connect(button_load, "clicked", G_CALLBACK(on_button_clicked), "LOAD");
+
     button_add = gtk_button_new_with_label("ADD");
     g_signal_connect(button_add, "clicked", G_CALLBACK(on_button_clicked), "ADD");
 
@@ -168,13 +181,14 @@ int gtk_draw(int argc, char *argv[]) {
 
     // Ajout des widgets dans la grille (placement dans les cellules)
     gtk_grid_attach(GTK_GRID(grid1), button_save, 0, 0, 1, 1);
+    gtk_grid_attach(GTK_GRID(grid1), button_load, 1, 0, 1, 1);
     gtk_grid_attach(GTK_GRID(grid1), button_add, 0, 1, 1, 2);
     gtk_grid_attach(GTK_GRID(grid1), button_start, 0, 5, 20, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider1, 3, 1, 18, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider2, 1, 2, 2, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider3, 3, 2, 18, 1);
     gtk_grid_attach(GTK_GRID(grid1), combo_box, 1, 1, 2, 1);
-    gtk_grid_attach(GTK_GRID(grid1), text_entry, 1, 0, 20, 1);
+    gtk_grid_attach(GTK_GRID(grid1), text_entry, 2, 0, 20, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider1_label, 4, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider2_label, 1, 2, 1, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider3_label, 4, 2, 1, 1);

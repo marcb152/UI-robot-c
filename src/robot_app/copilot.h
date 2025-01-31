@@ -10,7 +10,7 @@
 /** @brief Max scanning's attempt to check if a move is finished.
  * Adapt according your move
  */
-#define ENCODERS_SCAN_NB 1500
+#define ENCODERS_SCAN_NB 3500
 
 /** @brief Waiting time between two encoder's scans (in microseconds).
  * Adapt according to your cpu and simulator.

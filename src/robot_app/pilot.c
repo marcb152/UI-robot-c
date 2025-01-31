@@ -4,6 +4,8 @@
 
 #include "pilot.h"
 
+#include <stdlib.h>
+
 #include "robot.h"
 
 #define TURN_SENSOR_ROTATION 450
@@ -43,6 +45,18 @@ void pilot_start_move(const move_t *a_move)
                     reference_wheel = LEFT_WHEEL;
                     target_pos = 2 * TURN_SENSOR_ROTATION;
                     break;
+                default:
+                    if (a_move->angle <= 0)
+                    {
+                        reference_wheel = RIGHT_WHEEL;
+                        robot_set_speed(0, FULL_SPEED);
+                    }
+                    else
+                    {
+                        reference_wheel = LEFT_WHEEL;
+                        robot_set_speed(FULL_SPEED, 0);
+                    }
+                    target_pos = abs(a_move->angle) * TURN_SENSOR_ROTATION / 90;
             }
             break;
     }
