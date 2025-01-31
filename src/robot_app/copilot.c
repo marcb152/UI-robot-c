@@ -91,7 +91,7 @@ void copilot_rm_step(int index)
     if (path && index >= 0 && index < size)
     {
         // Décalage des valeurs et suppression par écrasement
-        for (int i = index; i <= size; ++i)
+        for (int i = index; i < size; ++i)
         {
             path[i] = path[i + 1];
         }

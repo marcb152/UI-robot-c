@@ -83,7 +83,7 @@ static void app_loop()
     if(copilot_is_path_complete())
     {
       copilot_stop();
-      stop = gtk_draw(NULL, NULL);
+      stop = gtk_draw(0, NULL);
     }
   }
 }

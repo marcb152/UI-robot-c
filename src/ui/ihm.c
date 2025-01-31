@@ -17,6 +17,7 @@ GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
 GtkWidget *separator1, *separator2;
 
 step_t * path;  // Déclaration sans initialisation
+void add_line(int index);
 
 void allocate_path(int size)
 {
