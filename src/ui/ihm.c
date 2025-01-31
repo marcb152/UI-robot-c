@@ -6,7 +6,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-int size = 5;
+int size = 1;
 int step_index = 0;
 
 GtkWidget *window;
@@ -28,6 +28,11 @@ void allocate_path(int size) {
     }
 }
 
+void destroy (GtkWidget* widget, gpointer data)
+{
+    gtk_main_quit();
+}
+
 static void on_button_clicked(GtkWidget *widget, gpointer data) 
 {
     g_print("Button clicked: %s\n", (char *)data);
@@ -38,6 +43,7 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         gint speed_value = gtk_range_get_value(GTK_RANGE(slider1));
         gint angle_value = gtk_range_get_value(GTK_RANGE(slider2));
         gint distance_value = gtk_range_get_value(GTK_RANGE(slider3));
+
 
         // Enregistrer ces valeurs dans l'étape actuelle
         path[step_index].move.angle = angle_value;
@@ -88,10 +94,6 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
     else if (widget == button_start || step_index == size) 
     {
         copilot_move();
-    }
-    else if (widget == button_quit) 
-    {
-        gtk_main_quit();
     }
 }
 
@@ -164,10 +166,10 @@ int gtk_draw(int argc, char *argv[]) {
     g_signal_connect(button_add, "clicked", G_CALLBACK(on_button_clicked), "ADD");
 
     button_quit = gtk_button_new_with_label("QUIT");
-    g_signal_connect(button_quit, "clicked", G_CALLBACK(on_button_clicked), "QUIT");
+    g_signal_connect(button_quit, "clicked", G_CALLBACK(destroy), "QUIT");
 
     button_start = gtk_button_new_with_label("START");
-    g_signal_connect(button_quit, "clicked", G_CALLBACK(on_button_clicked), "START");
+    g_signal_connect(button_quit, "clicked", G_CALLBACK(destroy), "START");
 
     // Création du slider1 allant de 0 à 100
     slider1 = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
