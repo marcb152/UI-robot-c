@@ -11,9 +11,5 @@ int gtk_draw(int argc, char** argv);
 
 static void on_button_clicked(GtkWidget *widget, gpointer data);
 
-static void on_combo_changed(GtkWidget *widget, gpointer data);
-
-static void on_value_changed(GtkWidget *widget, gpointer data);
-
 
 #endif //IHM_H

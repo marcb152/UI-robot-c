@@ -1,13 +1,11 @@
 #include "ihm.h"
 #include "../robot_app/copilot.h"
 #include "../robot_app/pilot.h"
-#include "../robot_app/robot.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-int size = 1;
-int step_index = 0;
+static int step_index = 0;
 
 GtkWidget *window;
 GtkWidget *vbox, *grid1, *hbox2, *hbox3;
@@ -30,6 +28,7 @@ void allocate_path(int size) {
 
 void destroy (GtkWidget* widget, gpointer data)
 {
+    gtk_widget_destroy(window);
     gtk_main_quit();
 }
 
@@ -45,15 +44,12 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         gint distance_value = gtk_range_get_value(GTK_RANGE(slider3));
         gint action_value = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_box));
 
-        step_t step = { {action_value, distance_value, angle_value}, speed_value };
+        step_t step = { {action_value, angle_value, distance_value}, speed_value };
 
         // Format du texte : "Step 1 | direction | angle | distance | vitesse"
         char text[200];
         const char *direction = (action_value == FORWARD) ? "FORWARD" : "ROTATION";
-        
-        // En fonction de l'action, on affiche l'angle ou la distance
-        int angle_or_distance = (action_value == FORWARD) ? distance_value : angle_value;
-        
+
         // Ajouter le texte formaté à la listbox
         snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", step_index + 1, direction, angle_value, distance_value, speed_value);
 
@@ -65,26 +61,17 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         printf("Contenu de path :\n");
 
         // If the user wants to add a step at the end of the path that doesn't exist yet
-        step_index++;
-
-        if (step_index == size) {
-            size++;
-        }
         copilot_add_step(step_index, &step);
+        step_index++;
 
         // Réafficher la fenêtre pour actualiser la listbox
         gtk_widget_show_all(window);
 
         for (int i = 0; i < step_index; i++)  // Parcours de toutes les étapes ajoutées
         {
-            const char *direction = (copilot_get_step(i)->move.action == FORWARD) ? "FORWARD" : "ROTATION";
-            
-            // En fonction de l'action, on affiche l'angle ou la distance
-            int angle_or_distance = (copilot_get_step(i)->move.action == FORWARD) ? copilot_get_step(i)->move.distance : copilot_get_step(i)->move.angle;
-            
             // Affichage
             printf("Step %d | %s | Angle: %d | Distance: %d | Vitesse: %d\n",
-                i + 1, direction, copilot_get_step(i)->move.angle, copilot_get_step(i)->move.distance, copilot_get_step(i)->speed);
+                i + 1, direction, angle_value, distance_value, speed_value);
         }
     } 
     else if (widget == button_save) 
@@ -92,48 +79,6 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         // Sauvegarder avec le bon nom de fichier
         copilot_save("path.txt");
     }
-    else if (widget == button_start || step_index == size) 
-    {
-        copilot_move();
-    }
-}
-
-static void on_value_changed(GtkWidget *widget, gpointer data) 
-{
-    gint value = gtk_range_get_value(GTK_RANGE(widget));
-    g_print("slider1 value: %d\n", value);
-
-    if (widget == slider1) 
-    {
-        speed_pct_t speed = (speed_pct_t)value;
-        robot_set_speed(speed, speed);
-    } 
-    else if (widget == slider2) 
-    {
-        copilot_get_step(step_index)->move.angle = (int)value;
-    } 
-    else if (widget == slider3) 
-    {
-        copilot_get_step(step_index)->move.distance = (int)value;
-    }
-}
-
-static void on_combo_changed(GtkWidget *widget, gpointer data) 
-{
-    gchar *text = gtk_combo_box_text_get_active_text(GTK_COMBO_BOX_TEXT(widget));
-    g_print("Selected option: %s\n", text);
-
-    // Comparaison correcte des chaînes
-    if (strcmp(text, "FORWARD") == 0) 
-    {
-        copilot_get_step(step_index)->move.action = FORWARD;
-    } 
-    else if (strcmp(text, "ROTATION") == 0) 
-    {
-        copilot_get_step(step_index)->move.action = ROTATION;
-    }
-
-    g_free(text);  // Libérer la mémoire allouée pour 'text'
 }
 
 int gtk_draw(int argc, char *argv[]) {
@@ -141,14 +86,14 @@ int gtk_draw(int argc, char *argv[]) {
     gtk_init(&argc, &argv);
 
     // Allouer dynamiquement la mémoire pour path
-    allocate_path(size);
+    allocate_path(1);
 
     // Création de la fenêtre
     window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     gtk_window_set_title(GTK_WINDOW(window), "Robot Interface");
     gtk_window_set_default_size(GTK_WINDOW(window), 400, 600);
     gtk_container_set_border_width(GTK_CONTAINER(window), 25);
-    g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    g_signal_connect(window, "destroy", G_CALLBACK(destroy), NULL);
 
     // Création de la boîte verticale principale
     vbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -170,24 +115,21 @@ int gtk_draw(int argc, char *argv[]) {
     g_signal_connect(button_quit, "clicked", G_CALLBACK(destroy), "QUIT");
 
     button_start = gtk_button_new_with_label("START");
-    g_signal_connect(button_quit, "clicked", G_CALLBACK(destroy), "START");
+    g_signal_connect(button_start, "clicked", G_CALLBACK(destroy), "START");
 
     // Création du slider1 allant de 0 à 100
     slider1 = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
     gtk_range_set_value(GTK_RANGE(slider1), 50);
-    g_signal_connect(slider1, "value-changed", G_CALLBACK(on_value_changed), NULL);
     slider1_label = gtk_label_new("Speed");
 
     // Création du slider2 pour l'angle
     slider2 = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, -360, 360, 1);
     gtk_range_set_value(GTK_RANGE(slider2), 0);
-    g_signal_connect(slider2, "value-changed", G_CALLBACK(on_value_changed), NULL);
     slider2_label = gtk_label_new("Angle");
 
     // Création du slider3 pour la distance
     slider3 = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 1000, 1);
     gtk_range_set_value(GTK_RANGE(slider3), 0);
-    g_signal_connect(slider3, "value-changed", G_CALLBACK(on_value_changed), NULL);
     slider3_label = gtk_label_new("Distance");
 
     // Création du menu déroulant avec FORWARD et ROTATION
@@ -195,7 +137,6 @@ int gtk_draw(int argc, char *argv[]) {
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), "FORWARD");
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_box), "ROTATION");
     gtk_combo_box_set_active(GTK_COMBO_BOX(combo_box), 0);  // "FORWARD" par défaut
-    g_signal_connect(combo_box, "changed", G_CALLBACK(on_combo_changed), NULL);
 
     // Création de la zone de texte pour entrer du texte
     text_entry = gtk_entry_new();
