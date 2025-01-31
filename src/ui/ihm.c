@@ -54,7 +54,7 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         // Ajouter le texte formaté à la listbox
         snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", 
                  step_index + 1, direction, path[step_index].move.angle, 
-                 path[step_index].move.distance), path[step_index].speed;
+                 path[step_index].move.distance, path[step_index].speed);
 
         label = gtk_label_new(text);
         row = gtk_list_box_row_new();
@@ -75,9 +75,9 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
             // En fonction de l'action, on affiche l'angle ou la distance
             int angle_or_distance = (path[i].move.action == FORWARD) ? path[i].move.distance : path[i].move.angle;
             
-            // Affichage formaté
-            printf("Step %d | %s | Angle: %d | Distance: %d\n",
-                i + 1, direction, path[i].move.angle, path[i].move.distance);
+            // Affichage
+            printf("Step %d | %s | Angle: %d | Distance: %d | Vitesse: %d\n",
+                i + 1, direction, path[i].move.angle, path[i].move.distance, path[i].speed);
         }
     } 
     else if (widget == button_save) 
@@ -88,6 +88,10 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
     else if (widget == button_start || step_index == size) 
     {
         copilot_move();
+    }
+    else if (widget == button_quit) 
+    {
+        gtk_main_quit();
     }
 }
 
@@ -160,10 +164,10 @@ int gtk_draw(int argc, char *argv[]) {
     g_signal_connect(button_add, "clicked", G_CALLBACK(on_button_clicked), "ADD");
 
     button_quit = gtk_button_new_with_label("QUIT");
-    g_signal_connect(button_quit, "clicked", G_CALLBACK(gtk_main_quit), "QUIT");
+    g_signal_connect(button_quit, "clicked", G_CALLBACK(on_button_clicked), "QUIT");
 
     button_start = gtk_button_new_with_label("START");
-    g_signal_connect(button_quit, "clicked", G_CALLBACK(copilot_move), "START");
+    g_signal_connect(button_quit, "clicked", G_CALLBACK(on_button_clicked), "START");
 
     // Création du slider1 allant de 0 à 100
     slider1 = gtk_scale_new_with_range(GTK_ORIENTATION_HORIZONTAL, 0, 100, 1);
@@ -256,6 +260,7 @@ int gtk_draw(int argc, char *argv[]) {
     // Affichage de la fenêtre
     gtk_widget_show_all(window);
 
+    // Lancement de la boucle principale
     gtk_main();
 
     return 0;
