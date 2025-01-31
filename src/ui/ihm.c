@@ -40,20 +40,21 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         gint distance_value = gtk_range_get_value(GTK_RANGE(slider3));
 
         // Enregistrer ces valeurs dans l'étape actuelle
-        path[step_index].angle = angle_value;
-        path[step_index].distance = distance_value;
+        path[step_index].move.angle = angle_value;
+        path[step_index].move.distance = distance_value;
+        path[step_index].speed = speed_value;
 
         // Format du texte : "Step 1 | direction | angle | distance | vitesse"
         char text[200];
-        const char *direction = (path[step_index].action == FORWARD) ? "FORWARD" : "ROTATION";
+        const char *direction = (path[step_index].move.action == FORWARD) ? "FORWARD" : "ROTATION";
         
         // En fonction de l'action, on affiche l'angle ou la distance
-        int angle_or_distance = (path[step_index].action == FORWARD) ? path[step_index].distance : path[step_index].angle;
+        int angle_or_distance = (path[step_index].move.action == FORWARD) ? path[step_index].move.distance : path[step_index].move.angle;
         
         // Ajouter le texte formaté à la listbox
-        snprintf(text, sizeof(text), "Step %d | %s | %d | %d", 
-                 step_index + 1, direction, path[step_index].angle, 
-                 path[step_index].distance);
+        snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", 
+                 step_index + 1, direction, path[step_index].move.angle, 
+                 path[step_index].move.distance), path[step_index].speed;
 
         label = gtk_label_new(text);
         row = gtk_list_box_row_new();
@@ -69,14 +70,14 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
 
         for (int i = 0; i < step_index; i++)  // Parcours de toutes les étapes ajoutées
         {
-            const char *direction = (path[i].action == FORWARD) ? "FORWARD" : "ROTATION";
+            const char *direction = (path[i].move.action == FORWARD) ? "FORWARD" : "ROTATION";
             
             // En fonction de l'action, on affiche l'angle ou la distance
-            int angle_or_distance = (path[i].action == FORWARD) ? path[i].distance : path[i].angle;
+            int angle_or_distance = (path[i].move.action == FORWARD) ? path[i].move.distance : path[i].move.angle;
             
             // Affichage formaté
             printf("Step %d | %s | Angle: %d | Distance: %d\n",
-                i + 1, direction, path[i].angle, path[i].distance);
+                i + 1, direction, path[i].move.angle, path[i].move.distance);
         }
     } 
     else if (widget == button_save) 
@@ -102,11 +103,11 @@ static void on_value_changed(GtkWidget *widget, gpointer data)
     } 
     else if (widget == slider2) 
     {
-        path[step_index].angle = (int)value;
+        path[step_index].move.angle = (int)value;
     } 
     else if (widget == slider3) 
     {
-        path[step_index].distance = (int)value;
+        path[step_index].move.distance = (int)value;
     }
 }
 
@@ -118,11 +119,11 @@ static void on_combo_changed(GtkWidget *widget, gpointer data)
     // Comparaison correcte des chaînes
     if (strcmp(text, "FORWARD") == 0) 
     {
-        path[step_index].action = FORWARD;
+        path[step_index].move.action = FORWARD;
     } 
     else if (strcmp(text, "ROTATION") == 0) 
     {
-        path[step_index].action = ROTATION;
+        path[step_index].move.action = ROTATION;
     }
 
     g_free(text);  // Libérer la mémoire allouée pour 'text'
