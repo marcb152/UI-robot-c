@@ -52,33 +52,16 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
 
         step_t step = { {action_value, angle_value, distance_value}, speed_value };
 
-        // Format du texte : "Step 1 | direction | angle | distance | vitesse"
-        char text[200];
-        const char *direction = (action_value == FORWARD) ? "FORWARD" : "ROTATION";
-
-        // Ajouter le texte formaté à la listbox
-        snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", step_index + 1, direction, angle_value, distance_value, speed_value);
-
-        label = gtk_label_new(text);
-        row = gtk_list_box_row_new();
-        gtk_container_add(GTK_CONTAINER(row), label);
-        gtk_list_box_insert(GTK_LIST_BOX(listbox), row, -1);  // Ajouter à la fin de la liste
-
-        printf("Contenu de path :\n");
-
         // If the user wants to add a step at the end of the path that doesn't exist yet
         copilot_add_step(step_index, &step);
+
+        // Format du texte : "Step 1 | direction | angle | distance | vitesse"
+        add_line(step_index);
+
         step_index++;
 
         // Réafficher la fenêtre pour actualiser la listbox
         gtk_widget_show_all(window);
-
-        for (int i = 0; i < step_index; i++)  // Parcours de toutes les étapes ajoutées
-        {
-            // Affichage
-            printf("Step %d | %s | Angle: %d | Distance: %d | Vitesse: %d\n",
-                i + 1, direction, angle_value, distance_value, speed_value);
-        }
     } 
     else if (widget == button_save) 
     {
@@ -96,20 +79,25 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
             // Actualiser la listbox avec les éléments chargés
             for (int i = 0 ; i < temp ; i++)
             {
-                char text[200];
-                step_t * step = copilot_get_step(i);
-                const char *direction = (step->move.action == FORWARD) ? "FORWARD" : "ROTATION";
-                
-                snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", i + 1, direction, step->move.angle, step->move.distance, step->speed);
-
-                label = gtk_label_new(text);
-                row = gtk_list_box_row_new();
-                gtk_container_add(GTK_CONTAINER(row), label);
-                gtk_list_box_insert(GTK_LIST_BOX(listbox), row, -1);
+                add_line(i);
             }
         }
         gtk_widget_show_all(window);
     }
+}
+
+void add_line(int index)
+{
+    char text[200];
+    step_t * step = copilot_get_step(index);
+    const char *direction = (step->move.action == FORWARD) ? "FORWARD" : "ROTATION";
+    
+    snprintf(text, sizeof(text), "Step %d | %s\n\t | Angle: %d\n\t | Distance: %d\n\t | Speed: %d", index + 1, direction, step->move.angle, step->move.distance, step->speed);
+
+    label = gtk_label_new(text);
+    row = gtk_list_box_row_new();
+    gtk_container_add(GTK_CONTAINER(row), label);
+    gtk_list_box_insert(GTK_LIST_BOX(listbox), row, -1);
 }
 
 // Fonction principale pour l'interface graphique GUI
@@ -187,17 +175,13 @@ int gtk_draw(int argc, char *argv[])
     // Ne plus utiliser la boucle 'for' qui remplissait la listbox initialement
 
     // Réduire l'espace entre les lignes et les colonnes dans la grille
-    gtk_grid_set_row_spacing(GTK_GRID(grid1), 5);  // Espacement entre les lignes
-    gtk_grid_set_column_spacing(GTK_GRID(grid1), 5);  // Espacement entre les colonnes
+    gtk_grid_set_row_spacing(GTK_GRID(grid1), 3);  // Espacement entre les lignes
+    gtk_grid_set_column_spacing(GTK_GRID(grid1), 3);  // Espacement entre les colonnes
 
     // Réduire la largeur du slider
     gtk_widget_set_size_request(slider_speed, 200, -1);  // 200 pixels de large, hauteur auto
     gtk_widget_set_size_request(slider_angle, 200, -1);
     gtk_widget_set_size_request(slider_distance, 200, -1);
-
-    // Réduire la hauteur des séparateurs
-    gtk_widget_set_size_request(separator1, -1, 1);  // Hauteur réduite
-    gtk_widget_set_size_request(separator2, -1, 1);
 
     // Réduire la marge autour de la fenêtre
     gtk_container_set_border_width(GTK_CONTAINER(window), 10);
@@ -228,12 +212,12 @@ int gtk_draw(int argc, char *argv[])
     separator2 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 
     // Ajout des widgets dans la boîte verticale
-    gtk_box_pack_start(GTK_BOX(vbox), grid1, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), grid1, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), separator1, FALSE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox2, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox2, FALSE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), scrollable_window, TRUE, TRUE, 0);
     gtk_box_pack_start(GTK_BOX(vbox), separator2, FALSE, TRUE, 0);
-    gtk_box_pack_start(GTK_BOX(vbox), hbox3, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox), hbox3, FALSE, TRUE, 0);
 
     // Make widgets inside the window expand to fill available space
     gtk_widget_set_vexpand(window, TRUE);
