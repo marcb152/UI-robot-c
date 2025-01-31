@@ -88,6 +88,7 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         {
             step_index = temp;
 
+            // Actualiser la listbox avec les éléments chargés
             for (int i = 0 ; i < temp ; i++)
             {
                 char text[200];
@@ -101,15 +102,15 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
                 gtk_container_add(GTK_CONTAINER(row), label);
                 gtk_list_box_insert(GTK_LIST_BOX(listbox), row, -1);
             }
-
-            // TODO: Actualiser la listbox
         }
         gtk_widget_show_all(window);
     }
 }
 
+// Fonction principale pour l'interface graphique GUI
 int gtk_draw(int argc, char *argv[])
 {
+    // Initialisation de GTK
     gtk_init(&argc, &argv);
 
     // Allouer dynamiquement la mémoire pour path
@@ -169,7 +170,7 @@ int gtk_draw(int argc, char *argv[])
     gtk_combo_box_set_active(GTK_COMBO_BOX(combo_box), 0);  // "FORWARD" par défaut
 
     // Création de la zone de texte pour entrer du texte
-    text_entry = gtk_entry_new();
+    text_entry = gtk_entry_new();       // Actuellement inutile car on save le path dans un fichier text déjà nommé.
 
     // Création de la liste scrollable
     scrollable_window = gtk_scrolled_window_new(NULL, NULL);

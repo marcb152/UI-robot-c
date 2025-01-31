@@ -57,7 +57,6 @@ int main(int argc, char *argv[])
   /* Ctrl+C to stop the program. */
   signal(SIGINT, sigint_handler);
 
-  gtk_draw(argc, argv);
   /* main loop */
   app_loop();
   /* close the robot simulator */
@@ -71,8 +70,14 @@ int main(int argc, char *argv[])
  */
 static void app_loop()
 {
+  gtk_draw(NULL,NULL);
+
   while (running)
   {
     copilot_move();
+    if(copilot_is_path_complete())
+    {
+      gtk_draw(NULL, NULL);
+    }
   }
 }
