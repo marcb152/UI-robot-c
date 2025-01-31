@@ -87,8 +87,23 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         if (temp != -1)
         {
             step_index = temp;
+
+            for (int i = 0 ; i < temp ; i++)
+            {
+                char text[200];
+                step_t * step = copilot_get_step(i);
+                
+                snprintf(text, sizeof(text), "Step %d | %s | %d | %d | %d", i + 1, step->move.action, step->move.angle, step->move.distance, step->speed);
+
+                label = gtk_label_new(text);
+                row = gtk_list_box_row_new();
+                gtk_container_add(GTK_CONTAINER(row), label);
+                gtk_list_box_insert(GTK_LIST_BOX(listbox), row, -1);
+            }
+
             // TODO: Actualiser la listbox
         }
+        gtk_widget_show_all(window);
     }
 }
 
