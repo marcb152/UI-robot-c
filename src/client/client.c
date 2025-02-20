@@ -20,7 +20,7 @@ int start_and_connect(void)
 {
     int un_socket;
     struct sockaddr_in adresse_du_serveur;
-    DesDonnees donnees;
+    message_t donnees;
 
     un_socket = socket (AF_INET, SOCK_STREAM, 0);
 
@@ -34,10 +34,10 @@ int start_and_connect(void)
 
     read (un_socket, &donnees, sizeof (donnees));
 
-    donnees.age_capitaine = ntohl (donnees.age_capitaine);
+//    donnees.age_capitaine = ntohl (donnees.age_capitaine);
 
-    printf ("Message reçu : %s\n", donnees.message);
-    printf ("Age du capitaine : %d\n", donnees.age_capitaine);
+//    printf ("Message reçu : %s\n", donnees.message);
+//    printf ("Age du capitaine : %d\n", donnees.age_capitaine);
 
     close (un_socket);
 

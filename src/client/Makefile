@@ -19,7 +19,6 @@ LIB_MRPIZ = $(realpath  ../../../lib_mrpiz/)
 #
 # Organisation du projet.
 #
-
 LIB_COMMON = $(realpath  ../common/)
 
 BINDIR = ../../bin

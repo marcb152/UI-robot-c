@@ -80,10 +80,10 @@ static void app_loop()
       running = STOPPED;
       break;
     }
-    copilot_move();
-    if(copilot_is_path_complete())
+    socket_copilot_move();
+    if(socket_copilot_is_path_complete())
     {
-      copilot_stop();
+      socket_copilot_stop();
       stop = gtk_draw(0, NULL);
     }
   }

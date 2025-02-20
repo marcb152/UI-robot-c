@@ -24,7 +24,7 @@ void allocate_path(int size)
 {
     path = calloc(size, sizeof(move_t));  // Allouer dynamiquement la mémoire
     if (path != NULL) {
-        copilot_init(path, size);  // Initialiser le copilot avec le path et le nombre d'étapes
+        socket_copilot_init(path, size);  // Initialiser le copilot avec le path et le nombre d'étapes
     } else {
         fprintf(stderr, "Memory allocation for path failed\n");
     }
@@ -55,7 +55,7 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         step_t step = { {action_value, angle_value, distance_value}, speed_value };
 
         // If the user wants to add a step at the end of the path that doesn't exist yet
-        copilot_add_step(step_index, &step);
+        socket_copilot_add_step(step_index, &step);
 
         // Format du texte : "Step 1 | direction | angle | distance | vitesse"
         add_line(step_index);
@@ -68,12 +68,12 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
     else if (widget == button_save) 
     {
         // Sauvegarder avec le bon nom de fichier
-        copilot_save("path.txt");
+        socket_copilot_save("path.txt");
     }
     else if (widget == button_load)
     {
         // Chargement avec le bon nom de fichier
-        const int temp = copilot_load("path.txt");
+        const int temp = socket_copilot_load("path.txt");
         if (temp != -1)
         {
             step_index = temp;
@@ -96,7 +96,7 @@ void delete_step(GtkWidget *widget, gpointer data)
         return;
     }
     int index = gtk_list_box_row_get_index(GTK_LIST_BOX_ROW(selected_row));
-    copilot_rm_step(index);
+    socket_copilot_rm_step(index);
     gtk_container_remove(GTK_CONTAINER(listbox), selected_row);
     fprintf(stdout,"%d", index);
     step_index--;
@@ -105,7 +105,7 @@ void delete_step(GtkWidget *widget, gpointer data)
 void add_line(int index)
 {
     char text[200];
-    step_t * step = copilot_get_step(index);
+    step_t * step = socket_copilot_get_step(index);
     const char *direction = (step->move.action == FORWARD) ? "FORWARD" : "ROTATION";
     
     snprintf(text, sizeof(text), "Step %d | %s\n\t | Angle: %d\n\t | Distance: %d\n\t | Speed: %d", index + 1, direction, step->move.angle, step->move.distance, step->speed);

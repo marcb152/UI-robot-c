@@ -116,7 +116,7 @@ static void handle_create_path() {
   step_t *path = calloc(temp, sizeof(step_t));
   if (temp > 0) {
     // Initialize copilot with the path and the number of steps
-    copilot_init(path, temp);
+    socket_copilot_init(path, temp);
     steps_number = temp;
     print_success_message(CMD_CREATE_PATH);
   } else {
@@ -147,7 +147,7 @@ static void handle_add_step() {
   if (step_nbr == steps_number) {
     steps_number++;
   }
-  copilot_add_step(step_nbr, &step);
+  socket_copilot_add_step(step_nbr, &step);
   print_success_message(CMD_ADD_STEP);
 }
 
@@ -158,7 +158,7 @@ static void handle_rm_step()
     return;
   }
   int step_nbr = handle_user_prompt_int(UI_ASK_STEP_NUMBER, 0, steps_number - 1);
-  copilot_rm_step(step_nbr);
+  socket_copilot_rm_step(step_nbr);
   steps_number--;
   print_success_message(CMD_DESTROY_PATH);
 }
@@ -167,7 +167,7 @@ static void handle_destroy_path() {
   /*TODO: call copilot_destroy_path(); */
   /*HINT: steps_number is set to 0 on success to prevent adding steps to a
    * non-existing path */
-  copilot_dispose();
+  socket_copilot_dispose();
   steps_number = 0;
   print_success_message(CMD_DESTROY_PATH);
 }
@@ -186,7 +186,7 @@ static int handle_start_path() {
   step_t * step;
   for (i = 0; i < steps_number; i++)
   {
-    step = copilot_get_step(i);
+    step = socket_copilot_get_step(i);
     if (step->speed == 0)
     {
       print_failure_message(CMD_START_PATH);
@@ -203,7 +203,7 @@ static void handle_show_path() {
   if (steps_number > 0) {
     print_success_message(CMD_SHOW_PATH);
     for (i = 0; i < steps_number; i++) {
-      step = copilot_get_step(i);
+      step = socket_copilot_get_step(i);
       if (step->speed != 0) {
         if (step->move.action == FORWARD)
           printf("%d : FORWARD speed:%d distance:%d \n", i, step->speed,
@@ -222,7 +222,7 @@ static void handle_show_path() {
 
 static void handle_save_path()
 {
-  if (copilot_save("path.txt") != -1)
+  if (socket_copilot_save("path.txt") != -1)
   {
     print_success_message(CMD_SAVE_PATH);
   }
@@ -234,7 +234,7 @@ static void handle_save_path()
 
 static void handle_load_path()
 {
-  const int temp = copilot_load("path.txt");
+  const int temp = socket_copilot_load("path.txt");
   if (temp != -1)
   {
     steps_number = temp;

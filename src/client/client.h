@@ -12,13 +12,15 @@
 
 #include "../common/pilot_common.h"
 
+int start_and_connect(void);
+
 /**
  * Initializes the copilot with the given path and size.
  *
  * @param path Pointer to the array of steps.
  * @param size Number of steps in the path.
  */
-void copilot_init(step_t * path, int size);
+void socket_copilot_init(step_t * path, int size);
 
 /**
  * @brief Moves the robot according to the current step in the path.
@@ -30,7 +32,7 @@ void copilot_init(step_t * path, int size);
  *
  * Must be called in a loop to work properly.
  */
-void copilot_move(void);
+void socket_copilot_move(void);
 
 /**
  * @brief Checks if the copilot has completed the path.
@@ -39,7 +41,7 @@ void copilot_move(void);
  *
  * @return 1 if the path is complete, 0 otherwise.
  */
-int copilot_is_path_complete(void);
+int socket_copilot_is_path_complete(void);
 
 /**
  * @brief Adds a step to the path at the specified index.
@@ -50,7 +52,7 @@ int copilot_is_path_complete(void);
  * @param index The index at which to add the step.
  * @param step A pointer to the step to add.
  */
-void copilot_add_step(int index, step_t * step);
+void socket_copilot_add_step(int index, step_t * step);
 
 /**
  * @brief Retrieves a step from the path.
@@ -60,7 +62,7 @@ void copilot_add_step(int index, step_t * step);
  * @param i The index of the step to retrieve.
  * @return A pointer to the step at the specified index, if it exists, NULL otherwise.
  */
-step_t * copilot_get_step(int i);
+step_t * socket_copilot_get_step(int i);
 
 /**
  * @brief Removes a step from the path.
@@ -69,7 +71,7 @@ step_t * copilot_get_step(int i);
  *
  * @param index The index of the step to remove.
  */
-void copilot_rm_step(int index);
+void socket_copilot_rm_step(int index);
 
 /**
  * @brief Frees resources allocated by the copilot.
@@ -78,7 +80,7 @@ void copilot_rm_step(int index);
  * during the copilot's operation. It ensures that memory is properly freed and
  * any other necessary cleanup is performed.
  */
-void copilot_dispose(void);
+void socket_copilot_dispose(void);
 
 /**
  * @brief Saves the current path to a file.
@@ -93,7 +95,7 @@ void copilot_dispose(void);
  * @param filename The name of the file to save the path to.
  * @return 0 on success, or -1 if an error occurred.
  */
-int copilot_save(char * filename);
+int socket_copilot_save(char * filename);
 
 /**
  * @brief Loads a path from a file.
@@ -109,8 +111,8 @@ int copilot_save(char * filename);
  * @param filename The name of the file to load the path from.
  * @return The number of steps loaded, or -1 if an error occurred.
  */
-int copilot_load(char * filename);
+int socket_copilot_load(char * filename);
 
-void copilot_stop(void);
+void socket_copilot_stop(void);
 
 #endif //CLIENT_H
