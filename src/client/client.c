@@ -44,3 +44,75 @@ int start_and_connect(void)
     // TODO: Return error message if connection fails
     return 0;
 }
+
+int send_data(message_t data)
+{
+
+}
+
+void socket_copilot_init(step_t *path, int size)
+{
+    message_t data = {.command = COPILOT_INIT, .number = size};
+    send_data(data);
+    for (int i = 0; i < size; ++i)
+    {
+        socket_copilot_add_step(i, &path[i]);
+    }
+}
+
+void socket_copilot_move(void)
+{
+    message_t data = {.command = COPILOT_MOVE};
+    send_data(data);
+}
+
+int socket_copilot_is_path_complete(void)
+{
+    message_t data = {.command = COPILOT_IS_PATH_COMPLETE};
+    send_data(data);
+    // TODO: Retrieve data received
+}
+
+void socket_copilot_add_step(int index, step_t *step)
+{
+    message_t data = {.command = COPILOT_ADD_STEP, .step = *step};
+    send_data(data);
+}
+
+step_t * socket_copilot_get_step(int i)
+{
+    message_t data = {.command = COPILOT_GET_STEP, .number = i};
+    send_data(data);
+    // TODO: Retrieve data received
+}
+
+void socket_copilot_rm_step(int index)
+{
+    message_t data = {.command = COPILOT_RM_STEP, .number = index};
+    send_data(data);
+}
+
+void socket_copilot_dispose(void)
+{
+    message_t data = {.command = COPILOT_DISPOSE};
+    send_data(data);
+}
+
+int socket_copilot_save(char *filename)
+{
+    message_t data = {.command = COPILOT_SAVE};
+    send_data(data);
+}
+
+int socket_copilot_load(char *filename)
+{
+    message_t data = {.command = COPILOT_LOAD};
+    send_data(data);
+    // TODO: Retrieve data received
+}
+
+void socket_copilot_stop(void)
+{
+    message_t data = {.command = COPILOT_STOP};
+    send_data(data);
+}

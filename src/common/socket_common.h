@@ -5,6 +5,8 @@
 
 #define PORT_DU_SERVEUR (12345)
 
+// TODO: Structure that holds data for robot_status_t
+// TODO: Structure that holds data for return values (int only sufficient?)
 typedef enum
 {
   // Copilot init will send the total size of the array without data.
