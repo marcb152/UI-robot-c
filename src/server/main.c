@@ -68,20 +68,20 @@ int main(int argc, char *argv[])
  */
 static void app_loop()
 {
-  int stop = gtk_draw(0, NULL);
+//  int stop = gtk_draw(0, NULL);
 
   while (running)
   {
-    if(stop)
-    {
-      running = STOPPED;
-      break;
-    }
+//    if(stop)
+//    {
+//      running = STOPPED;
+//      break;
+//    }
     copilot_move();
     if(copilot_is_path_complete())
     {
       copilot_stop();
-      stop = gtk_draw(0, NULL);
+//      stop = gtk_draw(0, NULL);
     }
   }
 }

@@ -2,7 +2,7 @@
 
 #include "ui_logic.h"
 
-#include "../../common/common.h"
+#include "../../common/pilot_common.h"
 #include "../client.h"
 #include <stdio.h>
 #include <stdlib.h>

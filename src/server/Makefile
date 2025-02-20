@@ -19,11 +19,12 @@ LIB_MRPIZ = $(realpath  ../../../lib_mrpiz/)
 #
 # Organisation du projet.
 #
+LIB_COMMON = $(realpath  ../common/)
 
-BINDIR = ../bin
-DOCDIR = ../doc
+BINDIR = ../../bin
+DOCDIR = ../../doc
 # Définitions des binaires (exécutables) à générer.
-EXE_NAME = go
+EXE_NAME = server
 EXE = $(BINDIR)/$(EXE_NAME)
 
 #
@@ -40,6 +41,7 @@ CC = gcc
 #Gestion des bibliotheques (intox)
 CCFLAGS  = -DINTOX -DINTOX_ADDRESS=127.0.0.1 -DINTOX_PORT=12341
 CCFLAGS += -I"$(LIB_MRPIZ)/include/mrpiz/"
+CCFLAGS += -I"$(LIB_COMMON)"
 
 # pour genérer les dépendances (fichiers .h inclus dans les .c)
 CCFLAGS += -MMD -MP
@@ -49,6 +51,7 @@ CCFLAGS += -D_BSD_SOURCE -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE -D_DEFAULT_SOU
 
 # Pour le linker
 LDFLAGS  = -L"$(LIB_MRPIZ)/lib/" -lintoxmrpiz -lintox
+LDFLAGS += -L"$(LIB_COMMON)"
 LDFLAGS += -lm
 # si besoin de multitache
 # LDFLAGS += -lrt -lpthread

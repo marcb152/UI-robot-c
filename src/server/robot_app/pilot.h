@@ -5,7 +5,7 @@
 #ifndef PILOT_H
 #define PILOT_H
 
-#include "../../common/common.h"
+#include "../../common/pilot_common.h"
 
 void pilot_start_move(const step_t * a_step);
 

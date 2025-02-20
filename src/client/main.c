@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "../common/common.h"
+#include "../common/pilot_common.h"
 #include "client.h"
 #include "ui/ihm.h"
 #include "ui/ui_logic.h"
@@ -42,12 +42,13 @@ static void sigint_handler(int dummy) { running = STOPPED; }
 int main(int argc, char *argv[])
 {
   /* start the robot simulator and check its good starting */
-  if (robot_start())
-  {
-    printf("Pb lancement mrPizz\n");
-    fflush(stdout);
-    return EXIT_FAILURE;
-  }
+  // TODO: Implement robot_start??
+//  if (robot_start())
+//  {
+//    printf("Pb lancement mrPizz\n");
+//    fflush(stdout);
+//    return EXIT_FAILURE;
+//  }
   printf("**** Version démo RM2 **** \n");
   printf("**** par JDL **** \n");
   printf("Ctrl+C pour quitter\n");
@@ -59,7 +60,8 @@ int main(int argc, char *argv[])
   /* main loop */
   app_loop();
   /* close the robot simulator */
-  robot_close();
+  // TODO: Implement robot_close??
+//  robot_close();
   return EXIT_SUCCESS;
 }
 

@@ -10,7 +10,7 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "../common/common.h"
+#include "../common/pilot_common.h"
 
 /**
  * Initializes the copilot with the given path and size.
