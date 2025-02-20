@@ -1,6 +1,7 @@
 #include "ihm.h"
-#include "../robot_app/copilot.h"
-#include "../robot_app/pilot.h"
+
+#include "../../common/common.h"
+#include "../client.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>

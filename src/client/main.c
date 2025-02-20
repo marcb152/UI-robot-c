@@ -7,9 +7,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "robot_app/pilot.h"
-#include "robot_app/robot.h"
-#include "robot_app/copilot.h"
+#include "../common/common.h"
+#include "client.h"
 #include "ui/ihm.h"
 #include "ui/ui_logic.h"
 

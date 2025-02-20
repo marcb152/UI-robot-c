@@ -8,7 +8,7 @@
 
 # la librairie MRPiZ permettant de discuter avec le simulateur Intox du robot MrPizz (programme java)
 #LIB_MRPIZ = /absolute/path/to/lib_mrpiz/
-LIB_MRPIZ = $(realpath  ../../lib_mrpiz/)
+LIB_MRPIZ = $(realpath  ../../../lib_mrpiz/)
 # Avec la ligne précédente, on suppose que :
 # - la lib a été mise au même niveau que le répertoire racine (et donc PAS dans le répertoire racine, mais au-dessus),
 # - et que son répertoire a été renommée (pour enlever la notion de version)
