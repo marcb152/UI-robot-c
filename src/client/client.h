@@ -2,6 +2,11 @@
 // Created by marc on 20/02/25.
 //
 
+/**
+ * @file client.h
+ * @brief This file contains the abstraction functions to take control of the robot over a socket.
+ */
+
 #ifndef CLIENT_H
 #define CLIENT_H
 

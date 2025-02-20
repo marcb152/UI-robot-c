@@ -2,8 +2,8 @@
 // Created by marc on 20/02/25.
 //
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef PILOT_COMMON_H
+#define PILOT_COMMON_H
 
 #define FORWARD 0
 #define ROTATION 1
@@ -41,4 +41,4 @@ typedef struct
     int speed;
 } step_t;
 
-#endif //COMMON_H
+#endif //PILOT_COMMON_H

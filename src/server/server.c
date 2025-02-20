@@ -1,3 +1,9 @@
+//
+// Created by marc on 20/02/25.
+//
+
+#include "server.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -7,7 +13,8 @@
 #include <sys/types.h>
 #include <netinet/in.h>
 #include <sys/socket.h>
-#include "commun.h"
+
+#include "../common/socket_common.h"
 
 #define MAX_PENDING_CONNECTIONS (5)
 
@@ -25,10 +32,10 @@ void communication_avec_client (int socket, int age_capitaine)
     /* la connexion est normalement déjà fermée par le client, mais la prudence ne coûte rien */
     close (socket);
 
-    exit (0);	
+    exit (0);
 }
 
-int main (void)
+int start_and_connect(void)
 {
     int socket_ecoute;
     int socket_donnees;
@@ -42,7 +49,7 @@ int main (void)
     mon_adresse.sin_addr.s_addr = htonl (INADDR_ANY); /* On s'attache a toutes les interfaces */
     /* On attache le socket a l'adresse indiquee */
     bind (socket_ecoute, (struct sockaddr *)&mon_adresse, sizeof (mon_adresse));
-    
+
     listen(socket_ecoute, MAX_PENDING_CONNECTIONS);
 
     socket_ecoute = accept(socket_ecoute,NULL,NULL);

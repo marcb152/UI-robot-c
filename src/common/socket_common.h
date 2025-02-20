@@ -1,5 +1,5 @@
-#if !defined __COMMUN_H
-#define __COMMUN_H
+#ifndef SOCKET_COMMON_H
+#define SOCKET_COMMON_H
 
 #define PORT_DU_SERVEUR (12345)
 
@@ -9,4 +9,4 @@ typedef struct
   int age_capitaine;
 } DesDonnees;
 
-#endif /* __COMMON_H */
+#endif /* SOCKET_COMMON_H */
