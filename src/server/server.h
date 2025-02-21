@@ -5,4 +5,10 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+
+int start_and_connect(void);
+
+int stop_and_disconnect(void);
+
+
 #endif //SERVER_H

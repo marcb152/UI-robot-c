@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
+#include "server.h"
 #include "robot_app/pilot.h"
 #include "robot_app/robot.h"
 #include "robot_app/copilot.h"
@@ -40,6 +41,7 @@ static void sigint_handler(int dummy) { running = STOPPED; }
 
 int main(int argc, char *argv[])
 {
+  start_and_connect();
   /* start the robot simulator and check its good starting */
   if (robot_start())
   {

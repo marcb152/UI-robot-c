@@ -18,42 +18,70 @@
 
 #define MAX_PENDING_CONNECTIONS (5)
 
-void communication_avec_client (int socket, int age_capitaine)
+static int socket_id = 0;
+
+void communication_avec_client(int socket)
 {
-    DesDonnees ma_donnee;
-    int quantite_envoyee;
+    message_t data = {};
 
-    strcpy (ma_donnee.message, "bonjour");
-    ma_donnee.age_capitaine = htonl (age_capitaine);
-
-    /* on envoie une donnee jusqu'à ce que le client ferme la connexion */
-    quantite_envoyee = write (socket, &ma_donnee, sizeof (ma_donnee));
+    while (1)
+    {
+        int return_value = read(socket, &data, sizeof(data));
+        fprintf(stdout, "Command received: %d\n", data.command);
+        fprintf(stdout, "Data received: %d\n", data.number);
+    }
 
     /* la connexion est normalement déjà fermée par le client, mais la prudence ne coûte rien */
-    close (socket);
+//    close (socket_id);
 
-    exit (0);
+//    exit (0);
 }
 
 int start_and_connect(void)
 {
-    int socket_ecoute;
-    int socket_donnees;
-    int age_capitaine_courant = 25;
     struct sockaddr_in mon_adresse;
-
-    socket_ecoute = socket(AF_INET, SOCK_STREAM,0);
+    socket_id = socket(AF_INET, SOCK_STREAM, 0);
+    if (socket_id < 0)
+    {
+        perror("Socket creation failed");
+        exit(EXIT_FAILURE);
+    }
 
     mon_adresse.sin_family = AF_INET;
-    mon_adresse.sin_port = PORT_DU_SERVEUR;
-    mon_adresse.sin_addr.s_addr = htonl (INADDR_ANY); /* On s'attache a toutes les interfaces */
-    /* On attache le socket a l'adresse indiquee */
-    bind (socket_ecoute, (struct sockaddr *)&mon_adresse, sizeof (mon_adresse));
+    mon_adresse.sin_port = htons(PORT_DU_SERVEUR);
+    mon_adresse.sin_addr.s_addr = htonl(INADDR_ANY);
 
-    listen(socket_ecoute, MAX_PENDING_CONNECTIONS);
+    // Bind with error handling
+    if (bind(socket_id, (struct sockaddr *)&mon_adresse, sizeof(mon_adresse)) < 0)
+    {
+        perror("Bind failed");
+        close(socket_id);
+        exit(EXIT_FAILURE);
+    }
 
-    socket_ecoute = accept(socket_ecoute,NULL,NULL);
+    // Listen with error handling
+    if (listen(socket_id, MAX_PENDING_CONNECTIONS) < 0)
+    {
+        perror("Listen failed");
+        close(socket_id);
+        exit(EXIT_FAILURE);
+    }
 
-    communication_avec_client(socket_ecoute,25);
+    printf("Server listening on port %d\n", PORT_DU_SERVEUR);
 
+    // Accept loop for multiple clients
+    while (1)
+    {
+        int client_socket = accept(socket_id, NULL, NULL);
+        if (client_socket < 0)
+        {
+            perror("Accept failed");
+            continue;
+        }
+
+        printf("Client connected!\n");
+
+        // Handle communication in a new function
+        communication_avec_client(client_socket);
+    }
 }

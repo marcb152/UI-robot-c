@@ -16,13 +16,14 @@
 
 #include "../common/socket_common.h"
 
+static int socket_id = 0;
+
 int start_and_connect(void)
 {
-    int un_socket;
     struct sockaddr_in adresse_du_serveur;
     message_t donnees;
 
-    un_socket = socket (AF_INET, SOCK_STREAM, 0);
+    socket_id = socket (AF_INET, SOCK_STREAM, 0);
 
     adresse_du_serveur.sin_family = AF_INET;
     adresse_du_serveur.sin_port = htons(PORT_DU_SERVEUR);
@@ -30,24 +31,33 @@ int start_and_connect(void)
     adresse_du_serveur.sin_addr = *((struct in_addr *)gethostbyname ("127.0.0.1")->h_addr_list[0]);
     /* On demande la connexion auprès du serveur (même principe que bind, mais côté client) */
 
-    connect (un_socket, (struct sockaddr *)&adresse_du_serveur, sizeof (adresse_du_serveur));
-
-    read (un_socket, &donnees, sizeof (donnees));
-
-//    donnees.age_capitaine = ntohl (donnees.age_capitaine);
-
-//    printf ("Message reçu : %s\n", donnees.message);
-//    printf ("Age du capitaine : %d\n", donnees.age_capitaine);
-
-    close (un_socket);
+    int return_value = connect (socket_id, (struct sockaddr *)&adresse_du_serveur, sizeof (adresse_du_serveur));
 
     // TODO: Return error message if connection fails
     return 0;
 }
 
+int stop_and_disconnect(void)
+{
+    close (socket_id);
+
+    socket_id = 0;
+
+    return 0;
+}
+
 int send_data(message_t data)
 {
-
+    if (socket_id)
+    {
+        int return_code = write(socket_id, &data, sizeof(data));
+        if (return_code < 0)
+        {
+            fprintf(stderr, "Error sending data: %s\n", strerror(errno));
+            return -1;
+        }
+    }
+    return 0;
 }
 
 void socket_copilot_init(step_t *path, int size)

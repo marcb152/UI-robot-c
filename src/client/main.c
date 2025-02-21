@@ -41,6 +41,9 @@ static void sigint_handler(int dummy) { running = STOPPED; }
 
 int main(int argc, char *argv[])
 {
+  start_and_connect();
+  socket_copilot_init(0, 0);
+  socket_copilot_get_step(2);
   /* start the robot simulator and check its good starting */
   // TODO: Implement robot_start??
 //  if (robot_start())

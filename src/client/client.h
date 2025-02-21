@@ -14,6 +14,8 @@
 
 int start_and_connect(void);
 
+int stop_and_disconnect(void);
+
 /**
  * Initializes the copilot with the given path and size.
  *
