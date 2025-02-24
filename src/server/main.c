@@ -6,6 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include "server.h"
 #include "robot_app/pilot.h"
@@ -76,19 +77,36 @@ int main(int argc, char *argv[])
  */
 static void app_loop()
 {
+  static bool robot_moving = false;
   while (running)
   {
-    int exit = communication_avec_client();
-    if (exit <= 0)
+    int data = communication_avec_client();
+    switch (data)
     {
-      running = 0;
-      break;
+      // 0 = client disconnected, exit server
+      case 0:
+        running = 0;
+        return;
+      // 1 = default, everything fine
+      case 1:
+        break;
+      case START_MOVING:
+        robot_moving = true;
+        break;
+      case STOP_MOVING:
+        robot_moving = false;
+        copilot_stop();
+        break;
     }
-    // TODO: Call copilot_move after receiving order from client
-//    copilot_move();
-    if(copilot_is_path_complete())
+
+    // If the robot is moving, move it
+    if (robot_moving)
     {
-      copilot_stop();
+      copilot_move();
+      if(copilot_is_path_complete())
+      {
+        copilot_stop();
+      }
     }
   }
 }

@@ -7,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#include <stdbool.h>
 #include <errno.h>
 #include <string.h>
 #include <netdb.h>
@@ -22,7 +21,6 @@
 
 static int socket_id = 0;
 static int client_id = 0;
-static bool robot_moving = false;
 
 // TODO: Clean quit and close socket
 void return_value(message_t value)
@@ -65,8 +63,7 @@ int communication_avec_client(void)
         	copilot_init(path, data.number);  // Initialiser le copilot avec le path et le nombre d'étapes
 			break;
 		case COPILOT_MOVE:
-            copilot_move();
-            break;
+            return START_MOVING;
         case COPILOT_IS_PATH_COMPLETE:
             return_data.number = copilot_is_path_complete();
             return_value(return_data);
@@ -94,8 +91,7 @@ int communication_avec_client(void)
             return_value(return_data);
             break;
         case COPILOT_STOP:
-            copilot_stop();
-            break;
+            return STOP_MOVING;
         default:
             fprintf(stderr, "Unknown command received: %s\n", command_names[data.command]);
             break;
