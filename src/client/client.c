@@ -42,7 +42,7 @@ int start_and_connect(void)
     adresse_du_serveur.sin_addr = *((struct in_addr *)gethostbyname ("127.0.0.1")->h_addr_list[0]);
     /* On demande la connexion auprès du serveur (même principe que bind, mais côté client) */
 
-    int return_value = connect (socket_id, (struct sockaddr *)&adresse_du_serveur, sizeof (adresse_du_serveur));
+    int return_value = connect(socket_id, (struct sockaddr *)&adresse_du_serveur, sizeof (adresse_du_serveur));
 
     // TODO: Return error message if connection fails
     return 0;
@@ -50,7 +50,7 @@ int start_and_connect(void)
 
 int stop_and_disconnect(void)
 {
-    close (socket_id);
+    if (socket_id) close (socket_id);
 
     socket_id = 0;
 

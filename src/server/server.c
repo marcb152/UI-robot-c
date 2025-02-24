@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <errno.h>
 #include <string.h>
 #include <netdb.h>
@@ -21,6 +22,7 @@
 
 static int socket_id = 0;
 static int client_id = 0;
+static bool robot_moving = false;
 
 // TODO: Clean quit and close socket
 void return_value(message_t value)
@@ -32,7 +34,7 @@ void return_value(message_t value)
     }
 }
 
-void communication_avec_client(void)
+int communication_avec_client(void)
 {
     message_t data = {};
 
@@ -42,6 +44,11 @@ void communication_avec_client(void)
     {
         perror("Error reading data");
         exit(EXIT_FAILURE);
+    }
+    if (success == 0)
+    {
+        fprintf(stderr, "Client disconnected\n");
+        return 0;
     }
 
     // Output the received data
@@ -89,7 +96,11 @@ void communication_avec_client(void)
         case COPILOT_STOP:
             copilot_stop();
             break;
+        default:
+            fprintf(stderr, "Unknown command received: %s\n", command_names[data.command]);
+            break;
     }
+    return 1;
 }
 
 int start_and_connect(void)
@@ -136,4 +147,14 @@ int start_and_connect(void)
 
     // Handle communication in a new function
     communication_avec_client();
+}
+
+int stop_and_disconnect(void)
+{
+    if (client_id) close(client_id);
+    if (socket_id) close(socket_id);
+    client_id = 0;
+    socket_id = 0;
+
+    return 0;
 }

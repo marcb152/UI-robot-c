@@ -13,7 +13,7 @@
  * @param argc Nombre d'arguments
  * @param argv Tableau d'arguments
  */
-int gtk_draw(int argc, char** argv);
+void gtk_draw(int argc, char** argv);
 
 /**
  * @brief Fonction de callback pour les boutons

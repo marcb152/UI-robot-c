@@ -61,6 +61,10 @@ int main(int argc, char *argv[])
 
   /* main loop */
   app_loop();
+
+  // TODO: Clean exit close server socket
+  // Close server socket
+  stop_and_disconnect();
   /* close the robot simulator */
   robot_close();
   return EXIT_SUCCESS;
@@ -74,8 +78,12 @@ static void app_loop()
 {
   while (running)
   {
-    communication_avec_client();
-    // TODO: Clean exit close server socket
+    int exit = communication_avec_client();
+    if (exit <= 0)
+    {
+      running = 0;
+      break;
+    }
     // TODO: Call copilot_move after receiving order from client
 //    copilot_move();
     if(copilot_is_path_complete())

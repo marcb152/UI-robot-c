@@ -34,7 +34,7 @@ void socket_copilot_init(int size);
  *
  * Must be called in a loop to work properly.
  */
-void socket_copilot_move(void);
+void socket_copilot_begin_move(void);
 
 /**
  * @brief Checks if the copilot has completed the path.

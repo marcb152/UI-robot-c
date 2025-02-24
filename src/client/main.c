@@ -64,6 +64,8 @@ int main(int argc, char *argv[])
   app_loop();
   /* close the robot simulator */
   // TODO: Implement robot_close??
+  // Close client socket
+  stop_and_disconnect();
 //  robot_close();
   return EXIT_SUCCESS;
 }
@@ -74,21 +76,5 @@ int main(int argc, char *argv[])
  */
 static void app_loop()
 {
-  int stop = gtk_draw(0, NULL);
-  // TODO: Change GTK return type to start without quitting
-
-  while (running)
-  {
-    if(stop)
-    {
-      running = STOPPED;
-      break;
-    }
-//    socket_copilot_move();
-    if(socket_copilot_is_path_complete())
-    {
-      socket_copilot_stop();
-      stop = gtk_draw(0, NULL);
-    }
-  }
+  gtk_draw(0, NULL);
 }

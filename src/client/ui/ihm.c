@@ -7,7 +7,6 @@
 #include <unistd.h>
 
 static int step_index = 0;
-static int return_value = 0;
 
 GtkWidget *window;
 GtkWidget *vbox, *grid1, *hbox2, *hbox3;
@@ -26,10 +25,6 @@ void allocate_path(int size)
 
 void destroy (GtkWidget* widget, gpointer data)
 {
-    if(widget == button_quit)
-    {
-        return_value = 1;
-    }
     gtk_widget_destroy(window);
     gtk_main_quit();
 }
@@ -80,6 +75,10 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
         }
         gtk_widget_show_all(window);
     }
+    else if (widget == button_start)
+    {
+        socket_copilot_begin_move();
+    }
 }
 
 void delete_step(GtkWidget *widget, gpointer data)
@@ -111,7 +110,7 @@ void add_line(int index)
 }
 
 // Fonction principale pour l'interface graphique GUI
-int gtk_draw(int argc, char *argv[])
+void gtk_draw(int argc, char *argv[])
 {
     // Initialisation de GTK
     gtk_init(&argc, &argv);
@@ -149,7 +148,7 @@ int gtk_draw(int argc, char *argv[])
     g_signal_connect(button_quit, "clicked", G_CALLBACK(destroy), "QUIT");
 
     button_start = gtk_button_new_with_label("START");
-    g_signal_connect(button_start, "clicked", G_CALLBACK(destroy), "START");
+    g_signal_connect(button_start, "clicked", G_CALLBACK(on_button_clicked), "START");
 
     button_delete = gtk_button_new_with_label("DEL");
     g_signal_connect(button_delete, "clicked", G_CALLBACK(delete_step), "DEL");
@@ -242,6 +241,4 @@ int gtk_draw(int argc, char *argv[])
 
     // Lancement de la boucle principale
     gtk_main();
-
-    return return_value;
 }
