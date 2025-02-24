@@ -1,9 +1,9 @@
 //
-// Created by marc on 10/01/25.
+// Created by marc on 20/02/25.
 //
 
-#ifndef PILOT_H
-#define PILOT_H
+#ifndef PILOT_COMMON_H
+#define PILOT_COMMON_H
 
 #define FORWARD 0
 #define ROTATION 1
@@ -41,13 +41,4 @@ typedef struct
     int speed;
 } step_t;
 
-
-void pilot_start_move(const step_t * a_step);
-
-move_status_t pilot_stop_at_target(void);
-
-move_status_t get_status(void);
-
-void pilot_stop(void);
-
-#endif //PILOT_H
+#endif //PILOT_COMMON_H
