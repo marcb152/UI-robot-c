@@ -5,6 +5,7 @@
 #ifndef SERVER_H
 #define SERVER_H
 
+void communication_avec_client(void);
 
 int start_and_connect(void);
 

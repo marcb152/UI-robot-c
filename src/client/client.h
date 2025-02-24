@@ -22,7 +22,7 @@ int stop_and_disconnect(void);
  * @param path Pointer to the array of steps.
  * @param size Number of steps in the path.
  */
-void socket_copilot_init(step_t * path, int size);
+void socket_copilot_init(int size);
 
 /**
  * @brief Moves the robot according to the current step in the path.

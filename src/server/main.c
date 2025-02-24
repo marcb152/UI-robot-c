@@ -41,7 +41,6 @@ static void sigint_handler(int dummy) { running = STOPPED; }
 
 int main(int argc, char *argv[])
 {
-  start_and_connect();
   /* start the robot simulator and check its good starting */
   if (robot_start())
   {
@@ -49,13 +48,16 @@ int main(int argc, char *argv[])
     fflush(stdout);
     return EXIT_FAILURE;
   }
-  printf("**** Version démo RM2 **** \n");
-  printf("**** par JDL **** \n");
+  printf("**** Serveur pour Robot **** \n");
+  printf("**** par Marc & Tom **** \n");
   printf("Ctrl+C pour quitter\n");
   fflush(stdout);
 
   /* Ctrl+C to stop the program. */
   signal(SIGINT, sigint_handler);
+
+  // Start server socket
+  start_and_connect();
 
   /* main loop */
   app_loop();
@@ -70,20 +72,14 @@ int main(int argc, char *argv[])
  */
 static void app_loop()
 {
-//  int stop = gtk_draw(0, NULL);
-
   while (running)
   {
-//    if(stop)
-//    {
-//      running = STOPPED;
-//      break;
-//    }
-    copilot_move();
+    communication_avec_client();
+    // TODO: Call copilot_move after receiving order from client
+//    copilot_move();
     if(copilot_is_path_complete())
     {
       copilot_stop();
-//      stop = gtk_draw(0, NULL);
     }
   }
 }

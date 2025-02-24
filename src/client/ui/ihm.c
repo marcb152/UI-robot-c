@@ -17,17 +17,11 @@ GtkWidget *lbl_slider_speed, *lbl_slider_angle, *lbl_slider_dst;
 GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
 GtkWidget *separator1, *separator2;
 
-step_t * path;  // Déclaration sans initialisation
 void add_line(int index);
 
 void allocate_path(int size)
 {
-    path = calloc(size, sizeof(move_t));  // Allouer dynamiquement la mémoire
-    if (path != NULL) {
-        socket_copilot_init(path, size);  // Initialiser le copilot avec le path et le nombre d'étapes
-    } else {
-        fprintf(stderr, "Memory allocation for path failed\n");
-    }
+    socket_copilot_init(size);  // Initialiser le copilot avec le path et le nombre d'étapes
 }
 
 void destroy (GtkWidget* widget, gpointer data)

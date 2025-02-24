@@ -3,7 +3,7 @@
 
 #include "pilot_common.h"
 
-#define PORT_DU_SERVEUR (12345)
+#define PORT_DU_SERVEUR (12005)
 
 // TODO: Structure that holds data for robot_status_t
 // TODO: Structure that holds data for return values (int only sufficient?)
@@ -24,6 +24,19 @@ typedef enum
   COPILOT_LOAD,
   COPILOT_STOP,
 } socket_command;
+
+const char* command_names[] = {
+    "COPILOT_INIT",
+    "COPILOT_MOVE",
+    "COPILOT_IS_PATH_COMPLETE",
+    "COPILOT_ADD_STEP",
+    "COPILOT_GET_STEP",
+    "COPILOT_RM_STEP",
+    "COPILOT_DISPOSE",
+    "COPILOT_SAVE",
+    "COPILOT_LOAD",
+    "COPILOT_STOP",
+};
 
 /**
  * @brief Structure that contains the data sent to and received bu the client/server.

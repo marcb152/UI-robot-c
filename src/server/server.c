@@ -15,26 +15,56 @@
 #include <sys/socket.h>
 
 #include "../common/socket_common.h"
+#include "robot_app/copilot.h"
 
 #define MAX_PENDING_CONNECTIONS (5)
 
 static int socket_id = 0;
+static int client_id = 0;
 
-void communication_avec_client(int socket)
+void communication_avec_client(void)
 {
     message_t data = {};
 
-    while (1)
+    int return_value = read(client_id, &data, sizeof(data));
+
+    switch (data.command)
     {
-        int return_value = read(socket, &data, sizeof(data));
-        fprintf(stdout, "Command received: %d\n", data.command);
-        fprintf(stdout, "Data received: %d\n", data.number);
+    	case COPILOT_INIT:
+          	step_t* path = calloc(data.number, sizeof(step_t));  // Allouer dynamiquement la mémoire
+        	copilot_init(path, data.number);  // Initialiser le copilot avec le path et le nombre d'étapes
+			break;
+		case COPILOT_MOVE:
+            copilot_move();
+            break;
+        case COPILOT_IS_PATH_COMPLETE:
+            copilot_is_path_complete();
+            break;
+        case COPILOT_ADD_STEP:
+            copilot_add_step(data.number, &data.step);
+            break;
+        case COPILOT_GET_STEP:
+            copilot_get_step(data.number);
+            break;
+        case COPILOT_RM_STEP:
+            copilot_rm_step(data.number);
+            break;
+        case COPILOT_DISPOSE:
+            copilot_dispose();
+            break;
+        case COPILOT_SAVE:
+            copilot_save("path.txt");
+            break;
+        case COPILOT_LOAD:
+            copilot_load("path.txt");
+            break;
+        case COPILOT_STOP:
+            copilot_stop();
+            stop_and_disconnect();
+            break;
     }
-
-    /* la connexion est normalement déjà fermée par le client, mais la prudence ne coûte rien */
-//    close (socket_id);
-
-//    exit (0);
+    fprintf(stdout, "Command received: %s\n", command_names[data.command]);
+    fprintf(stdout, "Data received: %d\n", data.number);
 }
 
 int start_and_connect(void)
@@ -69,19 +99,16 @@ int start_and_connect(void)
 
     printf("Server listening on port %d\n", PORT_DU_SERVEUR);
 
-    // Accept loop for multiple clients
-    while (1)
+    // Accept clients
+    client_id = accept(socket_id, NULL, NULL);
+    if (client_id < 0)
     {
-        int client_socket = accept(socket_id, NULL, NULL);
-        if (client_socket < 0)
-        {
-            perror("Accept failed");
-            continue;
-        }
-
-        printf("Client connected!\n");
-
-        // Handle communication in a new function
-        communication_avec_client(client_socket);
+        perror("Accept failed");
+        exit(EXIT_FAILURE);
     }
+
+    printf("Client connected!\n");
+
+    // Handle communication in a new function
+    communication_avec_client();
 }

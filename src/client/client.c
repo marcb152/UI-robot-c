@@ -60,7 +60,7 @@ int send_data(message_t data)
     return 0;
 }
 
-void socket_copilot_init(step_t *path, int size)
+void socket_copilot_init(int size)
 {
     message_t data = {.command = COPILOT_INIT, .number = size};
     send_data(data);
@@ -70,7 +70,7 @@ void socket_copilot_init(step_t *path, int size)
     }
 }
 
-void socket_copilot_move(void)
+void socket_copilot_begin_move(void)
 {
     message_t data = {.command = COPILOT_MOVE};
     send_data(data);

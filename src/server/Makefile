@@ -39,7 +39,7 @@ CC = gcc
 
 
 #Gestion des bibliotheques (intox)
-CCFLAGS  = -DINTOX -DINTOX_ADDRESS=127.0.0.1 -DINTOX_PORT=12341
+CCFLAGS  = -DINTOX -DINTOX_ADDRESS=127.0.0.1 -DINTOX_PORT=12345
 CCFLAGS += -I"$(LIB_MRPIZ)/include/mrpiz/"
 CCFLAGS += -I"$(LIB_COMMON)"
 
