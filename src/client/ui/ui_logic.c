@@ -1,4 +1,9 @@
-// UI.c
+/**
+* @file ui_logic.c
+* @brief User interface logic.
+* WARNING: This file not longer works due to client/server communication
+* which modifies the logic of the whole program.
+*/
 
 #include "ui_logic.h"
 
@@ -116,7 +121,8 @@ static void handle_create_path() {
   step_t *path = calloc(temp, sizeof(step_t));
   if (temp > 0) {
     // Initialize copilot with the path and the number of steps
-    socket_copilot_init(path, temp);
+    // TODO: WARNING, solve this
+//    socket_copilot_init(path, temp);
     steps_number = temp;
     print_success_message(CMD_CREATE_PATH);
   } else {

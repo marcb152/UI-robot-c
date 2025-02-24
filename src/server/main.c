@@ -75,6 +75,7 @@ static void app_loop()
   while (running)
   {
     communication_avec_client();
+    // TODO: Clean exit close server socket
     // TODO: Call copilot_move after receiving order from client
 //    copilot_move();
     if(copilot_is_path_complete())

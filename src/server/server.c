@@ -22,12 +22,35 @@
 static int socket_id = 0;
 static int client_id = 0;
 
+// TODO: Clean quit and close socket
+void return_value(message_t value)
+{
+    if (write(client_id, &value, sizeof(value)) < 0)
+    {
+        perror("Error sending return value");
+        exit(EXIT_FAILURE);
+    }
+}
+
 void communication_avec_client(void)
 {
     message_t data = {};
 
-    int return_value = read(client_id, &data, sizeof(data));
+    // Read the data sent by the client
+    int success = read(client_id, &data, sizeof(data));
+    if (success < 0)
+    {
+        perror("Error reading data");
+        exit(EXIT_FAILURE);
+    }
 
+    // Output the received data
+    fprintf(stdout, "Command received: %s\n", command_names[data.command]);
+    fprintf(stdout, "Data received: %d\n", data.number);
+
+    message_t return_data = { .command = RETURN_VALUE };
+
+    // Execute the command
     switch (data.command)
     {
     	case COPILOT_INIT:
@@ -38,13 +61,16 @@ void communication_avec_client(void)
             copilot_move();
             break;
         case COPILOT_IS_PATH_COMPLETE:
-            copilot_is_path_complete();
+            return_data.number = copilot_is_path_complete();
+            return_value(return_data);
             break;
         case COPILOT_ADD_STEP:
+          	// The client must ensure the index is correct
             copilot_add_step(data.number, &data.step);
             break;
         case COPILOT_GET_STEP:
-            copilot_get_step(data.number);
+            return_data.step = *copilot_get_step(data.number);
+            return_value(return_data);
             break;
         case COPILOT_RM_STEP:
             copilot_rm_step(data.number);
@@ -53,18 +79,17 @@ void communication_avec_client(void)
             copilot_dispose();
             break;
         case COPILOT_SAVE:
-            copilot_save("path.txt");
+            return_data.number = copilot_save("path.txt");
+            return_value(return_data);
             break;
         case COPILOT_LOAD:
-            copilot_load("path.txt");
+            return_data.number = copilot_load("path.txt");
+            return_value(return_data);
             break;
         case COPILOT_STOP:
             copilot_stop();
-            stop_and_disconnect();
             break;
     }
-    fprintf(stdout, "Command received: %s\n", command_names[data.command]);
-    fprintf(stdout, "Data received: %d\n", data.number);
 }
 
 int start_and_connect(void)

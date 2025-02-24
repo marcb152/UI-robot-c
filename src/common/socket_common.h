@@ -13,16 +13,21 @@ typedef enum
   // It will then call add step for each step in the path
   COPILOT_INIT,
   COPILOT_MOVE,
+  // RETURNS 1 if the path is complete, 0 otherwise
   COPILOT_IS_PATH_COMPLETE,
   COPILOT_ADD_STEP,
+  // RETURNS the step at the specified index
   COPILOT_GET_STEP,
   COPILOT_RM_STEP,
   COPILOT_DISPOSE,
   // Save and load commands will use the default file name server-side.
   // Thus no filename data is sent
+  // RETURNS 0 on success, -1 on failure
   COPILOT_SAVE,
+  // RETURNS the number of steps loaded
   COPILOT_LOAD,
   COPILOT_STOP,
+  RETURN_VALUE,
 } socket_command;
 
 const char* command_names[] = {
@@ -36,6 +41,7 @@ const char* command_names[] = {
     "COPILOT_SAVE",
     "COPILOT_LOAD",
     "COPILOT_STOP",
+    "RETURN_VALUE",
 };
 
 /**

@@ -18,6 +18,17 @@
 
 static int socket_id = 0;
 
+message_t * read_return_value(void)
+{
+    message_t * return_value = malloc(sizeof(message_t));
+    if (read(socket_id, return_value, sizeof(message_t)) < 0)
+    {
+        perror("Error reading return value");
+        return NULL;
+    }
+    return return_value;
+}
+
 int start_and_connect(void)
 {
     struct sockaddr_in adresse_du_serveur;
@@ -64,10 +75,6 @@ void socket_copilot_init(int size)
 {
     message_t data = {.command = COPILOT_INIT, .number = size};
     send_data(data);
-    for (int i = 0; i < size; ++i)
-    {
-        socket_copilot_add_step(i, &path[i]);
-    }
 }
 
 void socket_copilot_begin_move(void)
@@ -80,12 +87,12 @@ int socket_copilot_is_path_complete(void)
 {
     message_t data = {.command = COPILOT_IS_PATH_COMPLETE};
     send_data(data);
-    // TODO: Retrieve data received
+    return read_return_value()->number;
 }
 
 void socket_copilot_add_step(int index, step_t *step)
 {
-    message_t data = {.command = COPILOT_ADD_STEP, .step = *step};
+    message_t data = {.command = COPILOT_ADD_STEP, .number = index, .step = *step};
     send_data(data);
 }
 
@@ -93,7 +100,7 @@ step_t * socket_copilot_get_step(int i)
 {
     message_t data = {.command = COPILOT_GET_STEP, .number = i};
     send_data(data);
-    // TODO: Retrieve data received
+    return &read_return_value()->step;
 }
 
 void socket_copilot_rm_step(int index)
@@ -112,13 +119,14 @@ int socket_copilot_save(char *filename)
 {
     message_t data = {.command = COPILOT_SAVE};
     send_data(data);
+    return read_return_value()->number;
 }
 
 int socket_copilot_load(char *filename)
 {
     message_t data = {.command = COPILOT_LOAD};
     send_data(data);
-    // TODO: Retrieve data received
+    return read_return_value()->number;
 }
 
 void socket_copilot_stop(void)

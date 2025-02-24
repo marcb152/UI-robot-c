@@ -75,6 +75,7 @@ int main(int argc, char *argv[])
 static void app_loop()
 {
   int stop = gtk_draw(0, NULL);
+  // TODO: Change GTK return type to start without quitting
 
   while (running)
   {
