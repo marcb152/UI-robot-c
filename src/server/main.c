@@ -68,7 +68,6 @@ int main(int argc, char *argv[])
   /* main loop */
   app_loop();
 
-  // TODO: Clean exit close server socket
   // Close server socket
   stop_and_disconnect();
   /* close the robot simulator */
@@ -82,7 +81,6 @@ int main(int argc, char *argv[])
  */
 static void app_loop()
 {
-  static bool robot_moving = false;
   while (running)
   {
     int data = communication_avec_client();
@@ -96,13 +94,15 @@ static void app_loop()
       case 1:
         break;
       case START_MOVING:
+        // Starts the robot thread
         pthread_create(&robot_thread, NULL, &robot_loop, NULL);
-        int temp = pthread_detach(robot_thread);
-        robot_moving = true;
+        pthread_detach(robot_thread);
         break;
       case STOP_MOVING:
-        robot_moving = false;
-        pthread_cancel(robot_thread);
+        // Stops the robot thread from moving
+        if (robot_thread) pthread_cancel(robot_thread);
+        // Stop the robot
+        copilot_stop();
         break;
     }
   }

@@ -22,7 +22,6 @@
 static int socket_id = 0;
 static int client_id = 0;
 
-// TODO: Clean quit and close socket
 void return_value(message_t value)
 {
     if (write(client_id, &value, sizeof(value)) < 0)

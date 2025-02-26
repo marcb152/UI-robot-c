@@ -10,7 +10,7 @@ static int step_index = 0;
 
 GtkWidget *window;
 GtkWidget *vbox, *grid1, *hbox2, *hbox3;
-GtkWidget *button_save, *button_load, *button_add, *button_start, *button_quit, *button_delete;
+GtkWidget *button_save, *button_load, *button_add, *button_start, *button_quit, *button_delete, *button_stop;
 GtkWidget *slider_speed, *slider_angle, *slider_distance;
 GtkWidget *lbl_slider_speed, *lbl_slider_angle, *lbl_slider_dst;
 GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
@@ -25,6 +25,13 @@ void allocate_path(int size)
 
 void destroy (GtkWidget* widget, gpointer data)
 {
+  	// Stopping server cleanup
+    if (widget == button_quit)
+    {
+  		socket_copilot_stop();
+    	socket_copilot_dispose();
+	}
+
     gtk_widget_destroy(window);
     gtk_main_quit();
 }
@@ -78,6 +85,10 @@ static void on_button_clicked(GtkWidget *widget, gpointer data)
     else if (widget == button_start)
     {
         socket_copilot_begin_move();
+    }
+    else if (widget == button_stop)
+    {
+        socket_copilot_stop();
     }
 }
 
@@ -150,6 +161,9 @@ void gtk_draw(int argc, char *argv[])
     button_start = gtk_button_new_with_label("START");
     g_signal_connect(button_start, "clicked", G_CALLBACK(on_button_clicked), "START");
 
+    button_stop = gtk_button_new_with_label("STOP");
+    g_signal_connect(button_stop, "clicked", G_CALLBACK(on_button_clicked), "STOP");
+
     button_delete = gtk_button_new_with_label("DEL");
     g_signal_connect(button_delete, "clicked", G_CALLBACK(delete_step), "DEL");
 
@@ -205,6 +219,7 @@ void gtk_draw(int argc, char *argv[])
     gtk_grid_attach(GTK_GRID(grid1), button_add, 0, 1, 1, 1);
     gtk_grid_attach(GTK_GRID(grid1), button_delete, 0, 2, 1, 1);
     gtk_grid_attach(GTK_GRID(grid1), button_start, 0, 5, 20, 1);
+    gtk_grid_attach(GTK_GRID(grid1), button_stop, 0, 6, 20, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider_speed, 3, 1, 18, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider_angle, 1, 2, 2, 1);
     gtk_grid_attach(GTK_GRID(grid1), slider_distance, 3, 2, 18, 1);
