@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 #include "server.h"
 #include "robot_app/pilot.h"
@@ -30,10 +31,14 @@ typedef enum {
 // declaration of private functions
 static void app_loop(void);
 
+static void* robot_loop(void* arg);
+
 /**
  * @brief Global variable used for program clean exit
  */
 static process_state_t running = ALIVE;
+
+static pthread_t robot_thread;
 
 /**
  * @brief Function for CTRL+C signal management
@@ -91,22 +96,32 @@ static void app_loop()
       case 1:
         break;
       case START_MOVING:
+        pthread_create(&robot_thread, NULL, &robot_loop, NULL);
+        int temp = pthread_detach(robot_thread);
         robot_moving = true;
         break;
       case STOP_MOVING:
         robot_moving = false;
-        copilot_stop();
+        pthread_cancel(robot_thread);
         break;
     }
-
-    // If the robot is moving, move it
-    if (robot_moving)
-    {
-      copilot_move();
-      if(copilot_is_path_complete())
-      {
-        copilot_stop();
-      }
-    }
   }
+}
+
+/**
+ * @brief Main loop for the robot.
+ * Send commands to the pilot and display robot's status with a specific period.
+ */
+static void* robot_loop(void* arg)
+{
+  	while (1)
+    {
+        copilot_move();
+        if (copilot_is_path_complete())
+        {
+            copilot_stop();
+            break;
+        }
+    }
+    pthread_exit(NULL);
 }

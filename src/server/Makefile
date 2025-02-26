@@ -52,7 +52,7 @@ CCFLAGS += -D_BSD_SOURCE -D_XOPEN_SOURCE_EXTENDED -D_XOPEN_SOURCE -D_DEFAULT_SOU
 # Pour le linker
 LDFLAGS  = -L"$(LIB_MRPIZ)/lib/" -lintoxmrpiz -lintox
 LDFLAGS += -L"$(LIB_COMMON)"
-LDFLAGS += -lm
+LDFLAGS += -lm -lpthread
 # si besoin de multitache
 # LDFLAGS += -lrt -lpthread
 
