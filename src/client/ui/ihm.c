@@ -15,7 +15,7 @@ GtkWidget *slider_speed, *slider_angle, *slider_distance;
 GtkWidget *lbl_slider_speed, *lbl_slider_angle, *lbl_slider_dst;
 GtkWidget *combo_box, *text_entry, *scrollable_window, *listbox, *row, *label;
 GtkWidget *separator1, *separator2;
-// TODO: Add stop button to stop the robot
+
 void add_line(int index);
 
 void allocate_path(int size)

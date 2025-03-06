@@ -40,6 +40,8 @@ static process_state_t running = ALIVE;
 
 static pthread_t robot_thread;
 
+static volatile bool robot_moving = false;
+
 /**
  * @brief Function for CTRL+C signal management
  */
@@ -95,10 +97,13 @@ static void app_loop()
         break;
       case START_MOVING:
         // Starts the robot thread
+        robot_moving = true;
         pthread_create(&robot_thread, NULL, &robot_loop, NULL);
         pthread_detach(robot_thread);
         break;
       case STOP_MOVING:
+        // Graceful stop of the robot
+        robot_moving = false;
         // Stops the robot thread from moving
         if (robot_thread) pthread_cancel(robot_thread);
         // Stop the robot
@@ -114,7 +119,7 @@ static void app_loop()
  */
 static void* robot_loop(void* arg)
 {
-  	while (1)
+  	while (robot_moving)
     {
         copilot_move();
         if (copilot_is_path_complete())
