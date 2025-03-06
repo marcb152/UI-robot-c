@@ -72,6 +72,10 @@ int main(int argc, char *argv[])
 
   // Close server socket
   stop_and_disconnect();
+
+  // Clean up copilot resources
+  copilot_cleanup();
+
   /* close the robot simulator */
   robot_close();
   return EXIT_SUCCESS;

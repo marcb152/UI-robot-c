@@ -118,4 +118,7 @@ int copilot_load(char * filename);
 
 void copilot_stop(void);
 
+// Clean up resources
+void copilot_cleanup(void);
+
 #endif //COPILOT_H

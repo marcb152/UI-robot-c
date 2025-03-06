@@ -7,12 +7,17 @@
 
 #include "../../common/pilot_common.h"
 
-void pilot_start_move(const step_t * a_step);
+// Opaque pointer for the Pilot object
+typedef struct Pilot Pilot;
 
-move_status_t pilot_stop_at_target(void);
+// Constructor and destructor
+Pilot* pilot_create(void);
+void pilot_destroy(Pilot* pilot);
 
-move_status_t get_status(void);
+// Methods
+void pilot_start_move(Pilot* pilot, const step_t *a_step);
+move_status_t pilot_stop_at_target(Pilot* pilot);
+move_status_t pilot_get_status(Pilot* pilot);
+void pilot_stop(Pilot* pilot);
 
-void pilot_stop(void);
-
-#endif //PILOT_H
+#endif // PILOT_H

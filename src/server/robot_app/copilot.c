@@ -4,7 +4,6 @@
 
 #include "copilot.h"
 #include "robot.h"
-#include "../../client/ui/ihm.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,9 +12,15 @@
 static step_t * path;
 static volatile int size;
 static int step_counter = 0;
+// Add a static Pilot instance for the copilot module
+static Pilot* pilot;
 
 void copilot_init(step_t * path_ptr, int path_size)
 {
+    // Create the pilot instance
+    if (!pilot) {
+        pilot = pilot_create();
+    }
     step_counter = 0;
     size = path_size;
     path = path_ptr;
@@ -24,7 +29,7 @@ void copilot_init(step_t * path_ptr, int path_size)
 void copilot_move(void)
 {
     robot_status_t my_status = robot_get_status();
-    pilot_start_move(&path[step_counter % size]);
+    pilot_start_move(pilot, &path[step_counter % size]);
     fprintf(stdout, "codeurs: g = %d, d = %d\n", my_status.left_encoder,
             my_status.right_encoder);
     fprintf(stdout, "proxy: g = %d, c = %d, d = %d\n", my_status.left_sensor,
@@ -36,7 +41,7 @@ void copilot_move(void)
     for (int i = 0; i < ENCODERS_SCAN_NB; i++)
     {
         usleep(DELAY);
-        if (pilot_stop_at_target() == MOVE_DONE)
+        if (pilot_stop_at_target(pilot) == MOVE_DONE)
         {
             step_counter++;
             break;
@@ -212,7 +217,14 @@ int copilot_load(char *filename)
 
 void copilot_stop(void)
 {
-    pilot_stop();
+    pilot_stop(pilot);
     step_counter = 0;
-    //activate_buttons();
+}
+
+void copilot_cleanup(void) {
+    // Clean up the pilot when we're done
+    if (pilot) {
+        pilot_destroy(pilot);
+        pilot = NULL;
+    }
 }
