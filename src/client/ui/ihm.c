@@ -41,7 +41,6 @@ void activate_buttons()
     gtk_widget_set_sensitive(button_save, TRUE);
     gtk_widget_set_sensitive(button_load, TRUE);
     gtk_widget_set_sensitive(button_add, TRUE);
-    gtk_widget_set_sensitive(button_quit, TRUE);
     gtk_widget_set_sensitive(button_start, TRUE);
     gtk_widget_set_sensitive(button_delete, TRUE);
 }
@@ -51,7 +50,6 @@ void deactivate_buttons()
     gtk_widget_set_sensitive(button_save, FALSE);
     gtk_widget_set_sensitive(button_load, FALSE);
     gtk_widget_set_sensitive(button_add, FALSE);
-    gtk_widget_set_sensitive(button_quit, FALSE);
     gtk_widget_set_sensitive(button_start, FALSE);
     gtk_widget_set_sensitive(button_delete, FALSE);
 }
