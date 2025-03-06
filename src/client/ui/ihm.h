@@ -38,4 +38,8 @@ void destroy(GtkWidget* widget, gpointer data);
  */
 void allocate_path(int size);
 
+void activate_buttons();
+
+void deactivate_buttons();
+
 #endif //IHM_H

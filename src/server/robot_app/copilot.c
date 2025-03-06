@@ -4,6 +4,7 @@
 
 #include "copilot.h"
 #include "robot.h"
+#include "../../client/ui/ihm.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -213,4 +214,5 @@ void copilot_stop(void)
 {
     pilot_stop();
     step_counter = 0;
+    //activate_buttons();
 }
