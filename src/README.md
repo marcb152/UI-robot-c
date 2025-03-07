@@ -51,6 +51,7 @@ RM6
 ## Installation
 
 Ce projet utilise le **Simulateur MrPizz version 2D (Java) sur le port 12345**.
+Notre projet utilise une interface graphique via GTK+3.0, donc sur Debian il faudra probablement installer le package "libgtk-3-dev".
 
 > [!CAUTION]
 > Il est nécessaire de lancer les programmes dans l'ordre suivant:
